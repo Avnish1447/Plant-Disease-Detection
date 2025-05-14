@@ -53,7 +53,6 @@ plant-disease-detector/
 ├── cnn_model.pkl             # Trained model
 ├── label_transform.pkl       # Label binarizer
 ├── requirements.txt          # Python dependencies
-├── plots/                    # Training plots (accuracy & loss)
 └── README.md  
 ````
 
