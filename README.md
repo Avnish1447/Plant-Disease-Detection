@@ -96,7 +96,6 @@ Download the **PlantVillage** dataset from Kaggle:
 * **Validation Accuracy:** \~96%
 * **Test Accuracy:** \~95% *(may vary based on dataset split)*
 
-Plots are saved in `plots/` after training.
 
 ---
 
