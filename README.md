@@ -103,6 +103,3 @@ Download the **PlantVillage** dataset from Kaggle:
 
 
 Happy diagnosing! 🌾🔬😁
-
-```
-```
