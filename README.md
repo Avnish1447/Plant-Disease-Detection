@@ -1,5 +1,6 @@
 # 🌿 Plant Disease Detector
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE) 
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
+
 [![Python](https://img.shields.io/badge/Python-3.8%2B-blue)](https://www.python.org/)  [![Flask](https://img.shields.io/badge/Flask-1.1.2-green)](https://flask.palletsprojects.com/)  [![Keras](https://img.shields.io/badge/Keras-2.4.3-red)](https://keras.io/)  [![OpenCV](https://img.shields.io/badge/OpenCV-4.5.1-yellow)](https://opencv.org/)  
 
 ---
