@@ -101,37 +101,26 @@ Download the **PlantVillage** dataset from Kaggle:
 ## 📊 Output Visualizations
 
 ### 1. Model Summary
-<a href="output_graphs/Output_1.jpg">
-  <img src="output_graphs/Output_1.jpg" width="300"/>
-</a>
+<div align="left">
+  <img src="output_graphs/Output_1.jpg" width="250"/>
+</div>
 
 ### 2. Training and Validation Accuracy
-<a href="output_graphs/Output_2.jpg">
-  <img src="output_graphs/Output_2.jpg" width="300"/>
-</a>
-<a href="output_graphs/Output_3.jpg">
-  <img src="output_graphs/Output_3.jpg" width="300"/>
-</a>
-<a href="output_graphs/Output_4.jpg">
-  <img src="output_graphs/Output_4.jpg" width="300"/>
-</a>
-<a href="output_graphs/Output_5.jpg">
-  <img src="output_graphs/Output_5.jpg" width="300"/>
-</a>
+<div align="left">
+  <img src="output_graphs/Output_2.jpg" width="250"/>
+  <img src="output_graphs/Output_3.jpg" width="250"/>
+  <img src="output_graphs/Output_4.jpg" width="250"/>
+  <img src="output_graphs/Output_5.jpg" width="250"/>
+</div>
 
 ### 3. Training and Validation Loss
-<a href="output_graphs/Output_6.jpg">
-  <img src="output_graphs/Output_6.jpg" width="300"/>
-</a>
-<a href="output_graphs/Output_7.jpg">
-  <img src="output_graphs/Output_7.jpg" width="300"/>
-</a>
-<a href="output_graphs/Output_8.jpg">
-  <img src="output_graphs/Output_8.jpg" width="300"/>
-</a>
-<a href="output_graphs/Output_9.jpg">
-  <img src="output_graphs/Output_9.jpg" width="300"/>
-</a>
+<div align="left">
+  <img src="output_graphs/Output_6.jpg" width="250"/>
+  <img src="output_graphs/Output_7.jpg" width="250"/>
+  <img src="output_graphs/Output_8.jpg" width="250"/>
+  <img src="output_graphs/Output_9.jpg" width="250"/>
+</div>
+
 
 
 ---
