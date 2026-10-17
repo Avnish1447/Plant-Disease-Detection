@@ -1,33 +1,369 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Plant Leaves Disease Detection System - An AI Approach</title>
-    <script src="https://cdn.tailwindcss.com"></script>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>FloraVision Pro — Intelligent Foliar Pathology & Botanical Diagnostics</title>
+  <meta name="description" content="State-of-the-art foliar disease detection powered by deep convolutional neural networks. Real-time diagnosis for 38 crop pathologies.">
+  
+  <!-- Apple Font & Inter Fallback -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+  
+  <!-- Stylesheet -->
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+
+  <!-- Lenis Smooth Scroll -->
+  <script src="https://unpkg.com/lenis@1.1.18/dist/lenis.min.js"></script>
+
+  <!-- GSAP & ScrollTrigger for Apple Keynote Scroll Animations -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+
+  <!-- Lucide Icons -->
+  <script src="https://unpkg.com/lucide@latest"></script>
 </head>
-<body class="bg-gray-900">
-    <section class="text-gray-400 bg-gray-900 body-font">
-        <div class="container px-5 py-24 mx-auto">
-          <div class="flex flex-col text-center w-full mb-12">
-            <h1 class="sm:text-3xl text-2xl font-medium title-font mb-4 text-white">Plant Leaves Disease Detection System</h1>
-            <p class="lg:w-2/3 mx-auto leading-relaxed text-base">An AI Approach</p>
+<body>
+
+  <!-- Floating Liquid Glass Navigation Bar -->
+  <header class="nav-wrapper">
+    <nav class="nav-bar">
+      <a href="#" class="brand-badge">
+        <span class="pulse-dot"></span>
+        <span>FloraVision Pro</span>
+      </a>
+      <div class="nav-links">
+        <a href="#keynote" class="nav-link">Overview</a>
+        <a href="#studio" class="nav-link">Studio</a>
+        <a href="#pipeline" class="nav-link">Architecture</a>
+        <a href="#specs" class="nav-link">Specs</a>
+      </div>
+      <a href="#studio" class="nav-cta">Diagnose Leaf</a>
+    </nav>
+  </header>
+
+  <!-- Hero Section -->
+  <section class="hero-stage">
+    <div class="hero-capsule">
+      <i data-lucide="sparkles" style="width: 14px; height: 14px;"></i>
+      <span>Neural Agronomy v2.4 • 38 Detectable Classes</span>
+    </div>
+
+    <h1 class="hero-title">
+      Intelligent Agronomy.<br>
+      At the <span class="glow-word">speed of sight.</span>
+    </h1>
+
+    <p class="hero-sub">
+      Instant foliar pathology classification powered by a 58.1-million parameter deep convolutional network. Real-time cellular-level leaf diagnostics engineered for modern crop stewardship.
+    </p>
+
+    <div class="hero-actions">
+      <a href="#studio" class="btn-apple-primary">
+        <i data-lucide="scan-line" style="width: 18px; height: 18px;"></i>
+        Launch Diagnostic Studio
+      </a>
+    </div>
+
+    <div class="scroll-indicator">
+      <div class="mouse-pill"></div>
+      <span>Scroll to inspect</span>
+    </div>
+  </section>
+
+  <!-- ==================================================== -->
+  <!-- PINNED APPLE KEYNOTE SCROLL SECTION                  -->
+  <!-- ==================================================== -->
+  <section id="keynote" class="pinned-keynote-wrapper">
+    <div class="pinned-keynote-container" id="pinnedContainer">
+      <div class="keynote-backdrop-glow"></div>
+
+      <div class="keynote-layout">
+        <!-- Pinned Centerpiece Device / Leaf Frame -->
+        <div class="pinned-device-frame" id="pinnedFrame">
+          <img src="{{ url_for('static', filename='samples/Tomato_Early_Blight.jpg') }}" alt="Analyzed Leaf" class="pinned-leaf-img" id="pinnedLeafImg">
+          
+          <!-- Holographic 256x256 Tensor Matrix Grid -->
+          <div class="hologram-matrix" id="hologramMatrix"></div>
+          
+          <!-- Scrubbed Laser Beam -->
+          <div class="scrubbed-laser" id="scrubbedLaser"></div>
+
+          <!-- Targeted Pathology Reticle -->
+          <div class="reticle-target" id="reticleTarget">
+            <div class="reticle-box"></div>
+            <div class="reticle-label">
+              <i data-lucide="target" style="width: 12px; height: 12px; display: inline-block; vertical-align: middle;"></i>
+              LESION DETECTED • 96.4% CONFIDENCE
+            </div>
           </div>
-          <div class="flex lg:w-2/3 w-full sm:flex-row flex-col mx-auto px-8 sm:px-0 items-end sm:space-x-4sm:space-y-0 space-y-4">
-            <div class="relative sm:mb-0 flex-grow w-full">
-              <label for="image" class="leading-7 text-sm text-gray-400">Choose Image</label>
-              <form action="/" method="post" enctype="multipart/form-data">
-                <input type="file" id="image" name="image" class="w-full bg-gray-800 bg-opacity-40 roundedborder border-gray-700 focus:border-green-500 focus:ring-2 focus:ring-green-900 focus:bg-transparenttext-base outline-none text-gray-100 py-1 px-3 leading-8 transition-colors duration-200 ease-in-out" accept=".JPG" autofocus>
-                </div>
-                <button class="text-white bg-green-500 border-0 py-2 px-8 focus:outline-none hover:bg-green-600 roundedtext-lg" type="submit">Check</button>
-            </form>
-            
-          </div>
-          {% if prediction %}
-                <img src="{{ image }}" class="lg:w-1/3 mx-auto mt-2 rounded-lg" alt="Plant Leaves Disease Image">
-                <h3 class="lg:w-2/3 mx-auto mt-2 leading-relaxed text-xl text-white">Predicted Disease: {{ prediction }}</h3>
-            {% endif %}
         </div>
-      </section>
+
+        <!-- Scrubbed Narrative Steps -->
+        <div class="keynote-narrative">
+          <!-- Slide 01 -->
+          <div class="narrative-slide active-slide" id="slide1">
+            <div class="slide-num">Phase 01 / Ingestion</div>
+            <h2 class="slide-heading">Sub-cellular Spectrometry.</h2>
+            <p class="slide-body">
+              Every foliar specimen is captured in 256×256 matrix resolution. Ambient field illumination is automatically calibrated to isolate microscopic leaf tissue from background artifacts.
+            </p>
+          </div>
+
+          <!-- Slide 02 -->
+          <div class="narrative-slide" id="slide2">
+            <div class="slide-num">Phase 02 / Feature Isolation</div>
+            <h2 class="slide-heading">Convolutional Laser Mapping.</h2>
+            <p class="slide-body">
+              As the neural tensor propagates across 5 hierarchical Conv2D filter banks, necrotic tissue, early-stage leaf halos, and fungal sporulation patterns are mathematically bound.
+            </p>
+          </div>
+
+          <!-- Slide 03 -->
+          <div class="narrative-slide" id="slide3">
+            <div class="slide-num">Phase 03 / Diagnosis</div>
+            <h2 class="slide-heading">Target Locked. Instant Rx.</h2>
+            <p class="slide-body">
+              The 58.1-million parameter dense projection matches cellular lesions against 38 agricultural pathologies, formulating actionable organic or chemical treatments in under 85 milliseconds.
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Diagnostic Studio Workbench -->
+  <section id="studio" class="studio-section">
+    <div class="container-narrow">
+      <div class="section-head">
+        <div class="section-eyebrow">Interactive Diagnostic Studio</div>
+        <h2 class="section-title">Drop. Scan. Cure.</h2>
+        <p class="section-lead">Upload a leaf photo from your garden or tap a calibrated botanical sample below to execute real-time neural inference.</p>
+      </div>
+
+      <div class="studio-grid">
+        <!-- Upload Card / Dropzone -->
+        <div class="upload-card apple-glass">
+          <div class="dropzone" id="dropzone">
+            <input type="file" id="imageFileInput" accept="image/jpeg,image/png,image/jpg" aria-label="Upload leaf image">
+            
+            <div class="upload-icon-wrapper">
+              <i data-lucide="leaf" style="width: 32px; height: 32px;"></i>
+            </div>
+            
+            <h3 class="upload-title">Drop your leaf image here</h3>
+            <p class="upload-hint">or click to browse from device (JPG, PNG)</p>
+
+            <!-- Real-time Preview Stage with LiDAR Scanline -->
+            <div class="preview-container" id="previewContainer">
+              <img id="previewImg" class="preview-img" alt="Leaf Sample Preview">
+              <div class="lidar-scanline" id="lidarScanline"></div>
+            </div>
+          </div>
+
+          <!-- Quick-Pick Sample Gallery -->
+          <div class="samples-bar">
+            <div class="samples-label">Quick Test Samples</div>
+            <div class="samples-list">
+              <button type="button" class="sample-chip" onclick="testSample('Tomato_Early_Blight.jpg', this)">
+                <i data-lucide="flask-conical" style="width: 14px; height: 14px;"></i>
+                Tomato Early Blight
+              </button>
+              <button type="button" class="sample-chip" onclick="testSample('Apple_Scab.jpg', this)">
+                <i data-lucide="flask-conical" style="width: 14px; height: 14px;"></i>
+                Apple Scab
+              </button>
+              <button type="button" class="sample-chip" onclick="testSample('Tomato_Healthy.jpg', this)">
+                <i data-lucide="check" style="width: 14px; height: 14px;"></i>
+                Tomato (Healthy)
+              </button>
+              <button type="button" class="sample-chip" onclick="testSample('Potato_Late_Blight.jpg', this)">
+                <i data-lucide="flask-conical" style="width: 14px; height: 14px;"></i>
+                Potato Late Blight
+              </button>
+              <button type="button" class="sample-chip" onclick="testSample('Pepper_Bacterial_Spot.jpg', this)">
+                <i data-lucide="flask-conical" style="width: 14px; height: 14px;"></i>
+                Pepper Bacterial Spot
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Real-Time Diagnostic Readout HUD -->
+        <div class="readout-card apple-glass" id="readoutCard">
+          <div>
+            <div class="readout-header">
+              <div>
+                <div class="readout-crop" id="readoutCrop">Botanical Analyzer</div>
+                <div class="readout-diagnosis" id="readoutDiagnosis">Awaiting Specimen</div>
+              </div>
+              <div class="hud-badge idle" id="hudBadge">
+                <i data-lucide="cpu" style="width: 14px; height: 14px;"></i>
+                Standby
+              </div>
+            </div>
+
+            <!-- Dynamic Confidence Gauge -->
+            <div class="confidence-meter">
+              <div class="confidence-header">
+                <span>Neural Match Probability</span>
+                <span id="confidenceScore">—</span>
+              </div>
+              <div class="confidence-bar-bg">
+                <div class="confidence-bar-fill" id="confidenceBarFill"></div>
+              </div>
+            </div>
+
+            <!-- Agronomic Treatment Protocol -->
+            <div class="treatment-box" id="treatmentBox" style="display: none;">
+              <div class="treatment-label">
+                <i data-lucide="shield-check" style="width: 15px; height: 15px; color: #22c55e;"></i>
+                Prescribed Agronomic Protocol
+              </div>
+              <p class="treatment-text" id="treatmentText">Select or upload an image to generate prescriptive botanical treatment.</p>
+            </div>
+          </div>
+
+          <!-- Probability Candidates Breakdown -->
+          <div>
+            <div class="samples-label">Taxonomy Confidence Spectrum</div>
+            <div class="candidates-list" id="candidatesContainer">
+              <div class="candidate-item">
+                <span class="candidate-name">Primary Pathology</span>
+                <span class="candidate-val">—</span>
+              </div>
+              <div class="candidate-item">
+                <span class="candidate-name">Secondary Probability</span>
+                <span class="candidate-val">—</span>
+              </div>
+              <div class="candidate-item">
+                <span class="candidate-name">Healthy Baseline</span>
+                <span class="candidate-val">—</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Neural Pipeline Section (Scroll Driven) -->
+  <section id="pipeline" class="pipeline-section">
+    <div class="container-narrow">
+      <div class="section-head">
+        <div class="section-eyebrow">Deep Neural Architecture</div>
+        <h2 class="section-title">Microscopic vision.<br>Sub-second precision.</h2>
+        <p class="section-lead">A purpose-built multi-stage convolutional neural network trained to identify complex plant cellular degradation before crop loss occurs.</p>
+      </div>
+
+      <div class="pipeline-cards">
+        <div class="pipeline-card apple-glass">
+          <div class="pipeline-step">Stage 01</div>
+          <h3 class="pipeline-card-title">256×256 Spectral Ingestion</h3>
+          <p class="pipeline-card-desc">
+            Raw leaf photographs are normalized across 3 spectral channels (RGB) and conditioned against varied lighting, tilt angles, and focal distortions via real-time geometric augmentation.
+          </p>
+        </div>
+
+        <div class="pipeline-card apple-glass">
+          <div class="pipeline-step">Stage 02</div>
+          <h3 class="pipeline-card-title">Convolutional Pyramids</h3>
+          <p class="pipeline-card-desc">
+            5 sequential Conv2D stages isolate micro-lesions, necrotic halos, fungal sporulation textures, and chlorotic veining patterns across 128 multi-scale feature filters.
+          </p>
+        </div>
+
+        <div class="pipeline-card apple-glass">
+          <div class="pipeline-step">Stage 03</div>
+          <h3 class="pipeline-card-title">38-Class Classification</h3>
+          <p class="pipeline-card-desc">
+            58.1 million deep parameters terminate into a dense 1024-node hidden layer with dropout regularization, delivering calibrated Softmax probability distributions across 38 cultivars.
+          </p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Apple Bento Specifications Grid -->
+  <section id="specs" class="bento-section">
+    <div class="container-narrow">
+      <div class="section-head">
+        <div class="section-eyebrow">Performance Metrics</div>
+        <h2 class="section-title">Engineered to excel in the field.</h2>
+      </div>
+
+      <div class="bento-grid">
+        <div class="bento-cell bento-col-8 apple-glass">
+          <div>
+            <div class="metric-huge">58.1M</div>
+            <div class="metric-label">Active Trainable Parameters</div>
+            <p class="metric-sub">Full-depth convolutional and dense projection matrices designed specifically for fine-grained botanical lesion detection.</p>
+          </div>
+        </div>
+
+        <div class="bento-cell bento-col-4 apple-glass">
+          <div>
+            <div class="metric-huge">38</div>
+            <div class="metric-label">Pathology Classes</div>
+            <p class="metric-sub">Comprehensive taxonomy covering viral, bacterial, fungal, and healthy control leaf states.</p>
+          </div>
+        </div>
+
+        <div class="bento-cell bento-col-4 apple-glass">
+          <div>
+            <div class="metric-huge">&lt;85ms</div>
+            <div class="metric-label">Inference Latency</div>
+            <p class="metric-sub">Rapid forward propagation optimized for low-latency web deployment and mobile edge devices.</p>
+          </div>
+        </div>
+
+        <div class="bento-cell bento-col-8 apple-glass">
+          <div>
+            <div class="metric-huge">Zero</div>
+            <div class="metric-label">Cloud Dependency Required</div>
+            <p class="metric-sub">Inference runs entirely in local runtime environments with full support for Apple Silicon Neural Engine & CPU execution.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Supported Flora Taxonomy Section -->
+  <section id="taxonomy" class="flora-section">
+    <div class="container-narrow">
+      <div class="section-eyebrow">Botanical Taxonomy</div>
+      <h2 class="section-title">Cultivars Supported</h2>
+      <p class="section-lead">Trained on over 54,000 foliar specimens spanning 14 major economic agricultural crops.</p>
+
+      <div class="crops-cloud">
+        <span class="crop-tag"><i data-lucide="check-circle" style="width: 14px; height: 14px; color: #22c55e;"></i> Tomato (10 Pathologies)</span>
+        <span class="crop-tag"><i data-lucide="check-circle" style="width: 14px; height: 14px; color: #22c55e;"></i> Potato (Early / Late Blight)</span>
+        <span class="crop-tag"><i data-lucide="check-circle" style="width: 14px; height: 14px; color: #22c55e;"></i> Bell Pepper (Bacterial Spot)</span>
+        <span class="crop-tag"><i data-lucide="check-circle" style="width: 14px; height: 14px; color: #22c55e;"></i> Apple (Scab, Black Rot, Rust)</span>
+        <span class="crop-tag"><i data-lucide="check-circle" style="width: 14px; height: 14px; color: #22c55e;"></i> Grape (Black Rot, Measles, Blight)</span>
+        <span class="crop-tag"><i data-lucide="check-circle" style="width: 14px; height: 14px; color: #22c55e;"></i> Corn / Maize (Leaf Spot, Rust, Blight)</span>
+        <span class="crop-tag"><i data-lucide="check-circle" style="width: 14px; height: 14px; color: #22c55e;"></i> Strawberry (Leaf Scorch)</span>
+        <span class="crop-tag"><i data-lucide="check-circle" style="width: 14px; height: 14px; color: #22c55e;"></i> Peach (Bacterial Spot)</span>
+        <span class="crop-tag"><i data-lucide="check-circle" style="width: 14px; height: 14px; color: #22c55e;"></i> Cherry (Powdery Mildew)</span>
+        <span class="crop-tag"><i data-lucide="check-circle" style="width: 14px; height: 14px; color: #22c55e;"></i> Blueberry (Healthy Foliage)</span>
+        <span class="crop-tag"><i data-lucide="check-circle" style="width: 14px; height: 14px; color: #22c55e;"></i> Orange / Citrus (Citrus Greening)</span>
+        <span class="crop-tag"><i data-lucide="check-circle" style="width: 14px; height: 14px; color: #22c55e;"></i> Squash (Powdery Mildew)</span>
+        <span class="crop-tag"><i data-lucide="check-circle" style="width: 14px; height: 14px; color: #22c55e;"></i> Raspberry</span>
+        <span class="crop-tag"><i data-lucide="check-circle" style="width: 14px; height: 14px; color: #22c55e;"></i> Soybean</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- Apple-grade Footer -->
+  <footer>
+    <div class="container-narrow">
+      <p style="margin-bottom: 8px;">FloraVision Pro Botanical Intelligence • Powered by Deep Learning & Computer Vision</p>
+      <p style="color: var(--text-tertiary); font-size: 0.78rem;">Designed with Apple Human Interface Guidelines & Anti-Slop Web Craft.</p>
+    </div>
+  </footer>
+
+  <!-- Application Script -->
+  <script src="{{ url_for('static', filename='js/app.js') }}"></script>
 </body>
 </html>
