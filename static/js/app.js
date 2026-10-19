@@ -25,7 +25,7 @@ document.addEventListener('DOMContentLoaded', () => {
   if (window.gsap && window.ScrollTrigger) {
     gsap.registerPlugin(ScrollTrigger);
 
-    // Hero Scroll Scrub Parallax (Title scales down & blurs as you scroll away from the top)
+    // Hero Scroll Scrub Parallax
     gsap.to('.hero-title', {
       scale: 0.92,
       y: -40,
@@ -54,7 +54,7 @@ document.addEventListener('DOMContentLoaded', () => {
       }
     });
 
-    // PINNED KEYNOTE SCROLL TIMELINE
+    // Pinned Keynote Scroll Timeline
     const keynotePin = gsap.timeline({
       scrollTrigger: {
         trigger: '#keynote',
@@ -67,25 +67,16 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     keynotePin
-      // Phase 1 -> 2: Hologram Matrix Fades in, Leaf Zooms
       .to('#hologramMatrix', { opacity: 1, duration: 0.8 })
       .to('#pinnedLeafImg', { scale: 1.18, duration: 1.2 }, '<')
       .to('#pinnedFrame', { rotateY: -4, rotateX: 3, duration: 1.2 }, '<')
-      
-      // Transition Slide 1 out, Slide 2 in
       .to('#slide1', { opacity: 0, y: -25, duration: 0.6 }, '+=0.2')
       .to('#slide2', { opacity: 1, y: 0, duration: 0.6 })
-
-      // Laser Beam Sweeps Down
       .to('#scrubbedLaser', { opacity: 1, duration: 0.3 })
       .to('#scrubbedLaser', { top: '85%', duration: 1.5, ease: 'none' })
-      
-      // Transition Slide 2 out, Slide 3 in
       .to('#slide2', { opacity: 0, y: -25, duration: 0.6 })
       .to('#slide3', { opacity: 1, y: 0, duration: 0.6 })
       .to('#scrubbedLaser', { opacity: 0, duration: 0.3 }, '<')
-
-      // Target Reticle Locks On with Zoom & Pop
       .to('#reticleTarget', { opacity: 1, scale: 1, duration: 0.8, ease: 'back.out(2)' })
       .to('#pinnedLeafImg', { scale: 1.26, filter: 'saturate(1.25) contrast(1.1)', duration: 0.8 }, '<')
       .to('#pinnedFrame', {
@@ -93,8 +84,6 @@ document.addEventListener('DOMContentLoaded', () => {
         borderColor: 'rgba(34, 197, 94, 0.6)',
         duration: 0.8
       }, '<')
-      
-      // Hold for final read before releasing pin
       .to({}, { duration: 0.6 });
 
     // 3D Perspective Scrub on Pipeline Cards
@@ -167,37 +156,76 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   // 4. In-Browser Edge AI (ONNX Runtime Web Engine)
+  // Dynamic Base Path resolution for GitHub Pages subpaths and Vercel/localhost
+  function getAssetUrl(relativePath) {
+    const currentPath = window.location.pathname;
+    const baseDir = currentPath.substring(0, currentPath.lastIndexOf('/') + 1);
+    return new URL(relativePath, window.location.origin + baseDir).href;
+  }
+
   let ortSession = null;
   let labelsMeta = null;
   let modelLoading = false;
+  let modelLoadPromise = null;
 
   async function initInBrowserModel() {
-    if (!window.ort) return;
-    try {
-      modelLoading = true;
-      if (ort.env && ort.env.wasm) {
-        ort.env.wasm.numThreads = 1;
-      }
-      
-      const labelsRes = await fetch('static/model/labels.json');
-      labelsMeta = await labelsRes.json();
-
-      ortSession = await ort.InferenceSession.create('static/model/model.onnx', {
-        executionProviders: ['wasm']
-      });
-      console.log('FloraVision In-Browser Neural Core loaded successfully via ONNX WebAssembly!');
-      modelLoading = false;
-    } catch (e) {
-      console.warn('In-browser model initialization notice:', e);
-      modelLoading = false;
+    if (!window.ort) {
+      console.warn('ONNX Runtime Web script not available on window.');
+      return;
     }
+    if (modelLoadPromise) return modelLoadPromise;
+
+    modelLoadPromise = (async () => {
+      try {
+        modelLoading = true;
+        
+        // Critical: Set WASM engine CDN paths for GitHub Pages subpaths
+        if (ort.env && ort.env.wasm) {
+          ort.env.wasm.numThreads = 1; // Single-thread mode for maximum cross-origin compatibility
+          ort.env.wasm.wasmPaths = 'https://cdn.jsdelivr.net/npm/onnxruntime-web/dist/';
+        }
+        
+        const labelsUrl = getAssetUrl('static/model/labels.json');
+        const modelUrl = getAssetUrl('static/model/model.onnx');
+
+        console.log(`[FloraAI] Loading taxonomy from: ${labelsUrl}`);
+        const labelsRes = await fetch(labelsUrl);
+        if (!labelsRes.ok) throw new Error(`HTTP ${labelsRes.status} loading labels.json`);
+        labelsMeta = await labelsRes.json();
+
+        console.log(`[FloraAI] Downloading neural model (~55MB) from: ${modelUrl}`);
+        ortSession = await ort.InferenceSession.create(modelUrl, {
+          executionProviders: ['wasm']
+        });
+
+        console.log('[FloraAI] Model loaded successfully into WebAssembly engine!');
+        modelLoading = false;
+        
+        // Update HUD badge to ready if waiting
+        if (hudBadge && hudBadge.classList.contains('idle')) {
+          hudBadge.innerHTML = '<i data-lucide="cpu" style="width: 14px; height: 14px;"></i> Ready';
+          if (window.lucide) lucide.createIcons();
+        }
+      } catch (e) {
+        console.error('[FloraAI] Model initialization error:', e);
+        modelLoading = false;
+      }
+    })();
+
+    return modelLoadPromise;
   }
 
+  // Pre-load model immediately on page load
   initInBrowserModel();
 
   async function predictImageInBrowser(imgElement) {
+    if (modelLoading) {
+      showLoadingModelNotice();
+      await modelLoadPromise;
+    }
+
     if (!ortSession || !labelsMeta) {
-      throw new Error('In-browser model not loaded yet.');
+      throw new Error('Neural model is still initializing. Please wait a few seconds.');
     }
 
     const canvas = document.createElement('canvas');
@@ -257,6 +285,13 @@ document.addEventListener('DOMContentLoaded', () => {
     };
   }
 
+  function showLoadingModelNotice() {
+    hudBadge.className = 'hud-badge idle';
+    hudBadge.innerHTML = '<span class="pulse-dot"></span> Downloading Engine';
+    readoutCrop.textContent = 'Neural Weight Ingestion';
+    readoutDiagnosis.textContent = 'Downloading Model (~55MB)...';
+  }
+
   // 5. Leaf Diagnosis Workbench Logic
   const dropzone = document.getElementById('dropzone');
   const fileInput = document.getElementById('imageFileInput');
@@ -312,18 +347,13 @@ document.addEventListener('DOMContentLoaded', () => {
       
       const tempImg = new Image();
       tempImg.onload = async () => {
-        // Try in-browser inference first (runs 100% on Vercel)
-        if (ortSession) {
-          try {
-            const result = await predictImageInBrowser(tempImg);
-            displayResults(result);
-            return;
-          } catch (err) {
-            console.warn('In-browser inference failed, falling back to server:', err);
-          }
+        try {
+          const result = await predictImageInBrowser(tempImg);
+          displayResults(result);
+        } catch (err) {
+          console.warn('In-browser inference failed, trying fallback:', err);
+          runAnalysisWithServer(file);
         }
-        // Fallback to local server if available
-        runAnalysisWithServer(file);
       };
       tempImg.src = e.target.result;
     };
@@ -356,7 +386,7 @@ document.addEventListener('DOMContentLoaded', () => {
         showError(res.error || 'Failed to process image');
       }
     } catch (err) {
-      showError('Inference request failed: ' + err.message);
+      showError('Diagnosis Notice: ' + err.message);
     }
   }
 
@@ -365,36 +395,18 @@ document.addEventListener('DOMContentLoaded', () => {
     document.querySelectorAll('.sample-chip').forEach(c => c.classList.remove('active'));
     if (chipElement) chipElement.classList.add('active');
 
-    const sampleUrl = `static/samples/${sampleFileName}`;
+    const sampleUrl = getAssetUrl(`static/samples/${sampleFileName}`);
     showPreview(sampleUrl);
 
     const tempImg = new Image();
+    tempImg.crossOrigin = 'anonymous';
     tempImg.onload = async () => {
-      if (ortSession) {
-        try {
-          const result = await predictImageInBrowser(tempImg);
-          displayResults(result);
-          return;
-        } catch (err) {
-          console.warn('In-browser inference failed on sample, falling back:', err);
-        }
-      }
-
-      // Fallback
       try {
-        const response = await fetch('/api/predict', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ sample: sampleFileName })
-        });
-        const res = await response.json();
-        if (res.success) {
-          displayResults(res.data);
-        } else {
-          showError(res.error || 'Failed to analyze sample');
-        }
+        const result = await predictImageInBrowser(tempImg);
+        displayResults(result);
       } catch (err) {
-        showError('Sample analysis failed: ' + err.message);
+        console.warn('In-browser sample inference failed, trying fallback:', err);
+        showError(err.message);
       }
     };
     tempImg.src = sampleUrl;
@@ -435,8 +447,8 @@ document.addEventListener('DOMContentLoaded', () => {
   function showError(msg) {
     lidarScanline.style.display = 'none';
     hudBadge.className = 'hud-badge diseased';
-    hudBadge.textContent = 'Error';
-    readoutCrop.textContent = 'Inference Notice';
+    hudBadge.textContent = 'Notice';
+    readoutCrop.textContent = 'Inference Status';
     readoutDiagnosis.textContent = msg;
   }
 });

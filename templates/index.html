@@ -12,7 +12,7 @@
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
   
   <!-- Stylesheet -->
-  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+  <link rel="stylesheet" href="static/css/style.css">
 
   <!-- Lenis Smooth Scroll -->
   <script src="https://unpkg.com/lenis@1.1.18/dist/lenis.min.js"></script>
@@ -85,7 +85,7 @@
       <div class="keynote-layout">
         <!-- Pinned Centerpiece Device / Leaf Frame -->
         <div class="pinned-device-frame" id="pinnedFrame">
-          <img src="{{ url_for('static', filename='samples/Tomato_Early_Blight.jpg') }}" alt="Analyzed Leaf" class="pinned-leaf-img" id="pinnedLeafImg">
+          <img src="static/samples/Tomato_Early_Blight.jpg" alt="Analyzed Leaf" class="pinned-leaf-img" id="pinnedLeafImg">
           
           <!-- Holographic 256x256 Tensor Matrix Grid -->
           <div class="hologram-matrix" id="hologramMatrix"></div>
@@ -367,6 +367,6 @@
   </footer>
 
   <!-- Application Script -->
-  <script src="{{ url_for('static', filename='js/app.js') }}"></script>
+  <script type="module" src="./static/js/app.js"></script>
 </body>
 </html>
