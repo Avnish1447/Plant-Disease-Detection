@@ -1,0 +1,23 @@
+# Ignore Python backend files from Vercel deployment
+# (Prevents Vercel from attempting to package 2.4GB TensorFlow into AWS Lambda)
+app.py
+mod.py
+train.py
+requirements.txt
+label_transform.pkl
+main.ipynb
+templates/
+
+# Datasets and training output
+archive/
+PlantVillage/
+output_graphs/
+
+# Python cache
+__pycache__/
+*.pyc
+
+# Local agent configs
+.agents/
+.claude/
+.devcontainer/
