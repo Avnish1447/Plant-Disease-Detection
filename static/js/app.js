@@ -25,8 +25,7 @@ document.addEventListener('DOMContentLoaded', () => {
   if (window.gsap && window.ScrollTrigger) {
     gsap.registerPlugin(ScrollTrigger);
 
-    // Hero elements are 100% visible on load.
-    // Parallax smoothly fades and lifts them ONLY as user scrolls away from top:
+    // Hero Scroll Scrub Parallax (Title scales down & blurs as you scroll away from the top)
     gsap.to('.hero-title', {
       scale: 0.92,
       y: -40,
@@ -55,9 +54,7 @@ document.addEventListener('DOMContentLoaded', () => {
       }
     });
 
-    // =========================================================
-    // PINNED KEYNOTE SCROLL TIMELINE (The Flagship Apple Feature)
-    // =========================================================
+    // PINNED KEYNOTE SCROLL TIMELINE
     const keynotePin = gsap.timeline({
       scrollTrigger: {
         trigger: '#keynote',
@@ -101,7 +98,7 @@ document.addEventListener('DOMContentLoaded', () => {
       .to({}, { duration: 0.6 });
 
     // 3D Perspective Scrub on Pipeline Cards
-    gsap.utils.toArray('.pipeline-card').forEach((card, index) => {
+    gsap.utils.toArray('.pipeline-card').forEach((card) => {
       gsap.fromTo(card, 
         { rotateX: 18, y: 70, opacity: 0.2, transformPerspective: 1000 },
         {
@@ -169,7 +166,98 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
-  // 4. Leaf Diagnosis Workbench Logic
+  // 4. In-Browser Edge AI (ONNX Runtime Web Engine)
+  let ortSession = null;
+  let labelsMeta = null;
+  let modelLoading = false;
+
+  async function initInBrowserModel() {
+    if (!window.ort) return;
+    try {
+      modelLoading = true;
+      if (ort.env && ort.env.wasm) {
+        ort.env.wasm.numThreads = 1;
+      }
+      
+      const labelsRes = await fetch('static/model/labels.json');
+      labelsMeta = await labelsRes.json();
+
+      ortSession = await ort.InferenceSession.create('static/model/model.onnx', {
+        executionProviders: ['wasm']
+      });
+      console.log('FloraVision In-Browser Neural Core loaded successfully via ONNX WebAssembly!');
+      modelLoading = false;
+    } catch (e) {
+      console.warn('In-browser model initialization notice:', e);
+      modelLoading = false;
+    }
+  }
+
+  initInBrowserModel();
+
+  async function predictImageInBrowser(imgElement) {
+    if (!ortSession || !labelsMeta) {
+      throw new Error('In-browser model not loaded yet.');
+    }
+
+    const canvas = document.createElement('canvas');
+    canvas.width = 256;
+    canvas.height = 256;
+    const ctx = canvas.getContext('2d');
+    ctx.drawImage(imgElement, 0, 0, 256, 256);
+
+    const imageData = ctx.getImageData(0, 0, 256, 256);
+    const data = imageData.data;
+
+    // Tensor shape: [1, 256, 256, 3] Float32 normalized to [0, 1]
+    const float32Data = new Float32Array(1 * 256 * 256 * 3);
+    let p = 0;
+    for (let i = 0; i < data.length; i += 4) {
+      float32Data[p++] = data[i] / 255.0;     // R
+      float32Data[p++] = data[i + 1] / 255.0; // G
+      float32Data[p++] = data[i + 2] / 255.0; // B
+    }
+
+    const inputTensor = new ort.Tensor('float32', float32Data, [1, 256, 256, 3]);
+    const inputName = ortSession.inputNames[0];
+    const outputName = ortSession.outputNames[0];
+    const feeds = { [inputName]: inputTensor };
+    
+    const outputMap = await ortSession.run(feeds);
+    const outputTensor = outputMap[outputName];
+    const probs = Array.from(outputTensor.data);
+
+    // Compute top 3
+    const indices = probs.map((prob, idx) => ({ prob, idx }))
+                         .sort((a, b) => b.prob - a.prob)
+                         .slice(0, 3);
+
+    const topClasses = indices.map(item => {
+      const fmt = labelsMeta.formatted[item.idx];
+      return {
+        raw: labelsMeta.classes[item.idx],
+        crop: fmt.crop,
+        condition: fmt.condition,
+        confidence: item.prob,
+        percentage: Math.round(item.prob * 1000) / 10
+      };
+    });
+
+    const primary = topClasses[0];
+    const info = labelsMeta.formatted[indices[0].idx];
+
+    return {
+      raw_label: primary.raw,
+      crop: info.crop,
+      condition: info.condition,
+      is_healthy: info.is_healthy,
+      confidence: primary.percentage,
+      treatment: info.treatment,
+      top3: topClasses
+    };
+  }
+
+  // 5. Leaf Diagnosis Workbench Logic
   const dropzone = document.getElementById('dropzone');
   const fileInput = document.getElementById('imageFileInput');
   const previewContainer = document.getElementById('previewContainer');
@@ -184,7 +272,6 @@ document.addEventListener('DOMContentLoaded', () => {
   const treatmentText = document.getElementById('treatmentText');
   const candidatesContainer = document.getElementById('candidatesContainer');
 
-  // Drag and drop events
   ['dragenter', 'dragover'].forEach(eventName => {
     dropzone.addEventListener(eventName, (e) => {
       e.preventDefault();
@@ -222,7 +309,23 @@ document.addEventListener('DOMContentLoaded', () => {
     const reader = new FileReader();
     reader.onload = (e) => {
       showPreview(e.target.result);
-      runAnalysisWithFile(file);
+      
+      const tempImg = new Image();
+      tempImg.onload = async () => {
+        // Try in-browser inference first (runs 100% on Vercel)
+        if (ortSession) {
+          try {
+            const result = await predictImageInBrowser(tempImg);
+            displayResults(result);
+            return;
+          } catch (err) {
+            console.warn('In-browser inference failed, falling back to server:', err);
+          }
+        }
+        // Fallback to local server if available
+        runAnalysisWithServer(file);
+      };
+      tempImg.src = e.target.result;
     };
     reader.readAsDataURL(file);
   }
@@ -237,7 +340,7 @@ document.addEventListener('DOMContentLoaded', () => {
     readoutDiagnosis.textContent = 'Processing Foliage Pixels...';
   }
 
-  async function runAnalysisWithFile(file) {
+  async function runAnalysisWithServer(file) {
     const formData = new FormData();
     formData.append('image', file);
 
@@ -262,24 +365,39 @@ document.addEventListener('DOMContentLoaded', () => {
     document.querySelectorAll('.sample-chip').forEach(c => c.classList.remove('active'));
     if (chipElement) chipElement.classList.add('active');
 
-    const sampleUrl = `/static/samples/${sampleFileName}`;
+    const sampleUrl = `static/samples/${sampleFileName}`;
     showPreview(sampleUrl);
 
-    try {
-      const response = await fetch('/api/predict', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ sample: sampleFileName })
-      });
-      const res = await response.json();
-      if (res.success) {
-        displayResults(res.data);
-      } else {
-        showError(res.error || 'Failed to analyze sample');
+    const tempImg = new Image();
+    tempImg.onload = async () => {
+      if (ortSession) {
+        try {
+          const result = await predictImageInBrowser(tempImg);
+          displayResults(result);
+          return;
+        } catch (err) {
+          console.warn('In-browser inference failed on sample, falling back:', err);
+        }
       }
-    } catch (err) {
-      showError('Sample analysis failed: ' + err.message);
-    }
+
+      // Fallback
+      try {
+        const response = await fetch('/api/predict', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ sample: sampleFileName })
+        });
+        const res = await response.json();
+        if (res.success) {
+          displayResults(res.data);
+        } else {
+          showError(res.error || 'Failed to analyze sample');
+        }
+      } catch (err) {
+        showError('Sample analysis failed: ' + err.message);
+      }
+    };
+    tempImg.src = sampleUrl;
   };
 
   function displayResults(data) {
