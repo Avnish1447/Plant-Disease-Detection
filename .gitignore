@@ -61,3 +61,7 @@ Thumbs.db
 .idea/
 *.swp
 *.swo
+
+
+# Markdown Files
+HOSTING_RESEARCH_REPORT.md
