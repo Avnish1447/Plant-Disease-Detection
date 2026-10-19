@@ -185,10 +185,12 @@ document.addEventListener('DOMContentLoaded', () => {
           ort.env.wasm.wasmPaths = 'https://cdn.jsdelivr.net/npm/onnxruntime-web/dist/';
         }
         
-        const labelsUrl = getAssetUrl('static/model/labels.json');
-        const modelUrl = getAssetUrl('static/model/model.onnx');
+        // Primary: Hugging Face Model Hub CDN (CORS & Range Request Enabled)
+        const HF_BASE = 'https://huggingface.co/Av1447/plant-disease-model/resolve/main';
+        const labelsUrl = `${HF_BASE}/labels.json`;
+        const modelUrl = `${HF_BASE}/model.onnx`;
 
-        console.log(`[FloraAI] Loading taxonomy from: ${labelsUrl}`);
+        console.log(`[FloraAI] Loading taxonomy from Hugging Face CDN: ${labelsUrl}`);
         const labelsRes = await fetch(labelsUrl);
         if (!labelsRes.ok) throw new Error(`HTTP ${labelsRes.status} loading labels.json`);
         labelsMeta = await labelsRes.json();

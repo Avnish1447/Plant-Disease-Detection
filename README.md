@@ -1,13 +1,3 @@
----
-title: FloraVision Pro
-emoji: 🌿
-colorFrom: green
-colorTo: blue
-sdk: static
-app_file: index.html
-pinned: false
----
-
 # 🌿 Plant Disease Detector
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 
