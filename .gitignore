@@ -3,6 +3,10 @@
 skills/
 skills-lock.json
 
+# Node dependencies
+node_modules/
+package-lock.json
+
 # Datasets
 PlantVillage/
 PlantVillage/plantvillage dataset/

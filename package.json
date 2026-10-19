@@ -1,0 +1,14 @@
+{
+  "name": "plant-disease-detection",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build && node -e \"const fs = require('fs'); fs.cpSync('static', 'dist/static', {recursive: true});\"",
+    "preview": "vite preview"
+  },
+  "devDependencies": {
+    "vite": "^6.0.0"
+  }
+}

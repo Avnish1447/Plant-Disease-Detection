@@ -1,8 +1,6 @@
 {
-  "version": 2,
-  "framework": null,
-  "cleanUrls": true,
-  "trailingSlash": false,
+  "buildCommand": "npm run build",
+  "outputDirectory": "dist",
   "headers": [
     {
       "source": "/static/(.*)",
