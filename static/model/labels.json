@@ -1,0 +1,290 @@
+{
+  "classes": [
+    "Apple___Apple_scab",
+    "Apple___Black_rot",
+    "Apple___Cedar_apple_rust",
+    "Apple___healthy",
+    "Blueberry___healthy",
+    "Cherry_(including_sour)___Powdery_mildew",
+    "Cherry_(including_sour)___healthy",
+    "Corn_(maize)___Cercospora_leaf_spot Gray_leaf_spot",
+    "Corn_(maize)___Common_rust_",
+    "Corn_(maize)___Northern_Leaf_Blight",
+    "Corn_(maize)___healthy",
+    "Grape___Black_rot",
+    "Grape___Esca_(Black_Measles)",
+    "Grape___Leaf_blight_(Isariopsis_Leaf_Spot)",
+    "Grape___healthy",
+    "Orange___Haunglongbing_(Citrus_greening)",
+    "Peach___Bacterial_spot",
+    "Peach___healthy",
+    "Pepper,_bell___Bacterial_spot",
+    "Pepper,_bell___healthy",
+    "Potato___Early_blight",
+    "Potato___Late_blight",
+    "Potato___healthy",
+    "Raspberry___healthy",
+    "Soybean___healthy",
+    "Squash___Powdery_mildew",
+    "Strawberry___Leaf_scorch",
+    "Strawberry___healthy",
+    "Tomato___Bacterial_spot",
+    "Tomato___Early_blight",
+    "Tomato___Late_blight",
+    "Tomato___Leaf_Mold",
+    "Tomato___Septoria_leaf_spot",
+    "Tomato___Spider_mites Two-spotted_spider_mite",
+    "Tomato___Target_Spot",
+    "Tomato___Tomato_Yellow_Leaf_Curl_Virus",
+    "Tomato___Tomato_mosaic_virus",
+    "Tomato___healthy"
+  ],
+  "treatments": {
+    "healthy": "Optimal plant vigor detected. Continue standard drip irrigation and balanced nitrogen-phosphorus-potassium nutrition.",
+    "bacterial_spot": "Prune symptomatic leaves. Apply copper bactericides during damp weather and avoid overhead sprinkler watering.",
+    "early_blight": "Remove lower infected foliage. Apply chlorothalonil or copper-based fungicides; mulch soil to prevent spore splash.",
+    "late_blight": "High urgency: isolate infected plants immediately. Apply systemic fungicides (mancozeb/cymoxanil) and destroy severely wilted crops.",
+    "leaf_mold": "Improve greenhouse airflow and lower relative humidity below 85%. Treat with bio-fungicides like Bacillus subtilis.",
+    "septoria_leaf_spot": "Strip infected lower foliage, sanitize pruning shears, and apply preventative organic neem or copper sprays.",
+    "spider_mites": "Spray with cold water blast or apply horticultural neem oil / insecticidal soap directly to leaf undersides.",
+    "target_spot": "Ensure adequate spacing for light penetration; apply azoxystrobin or protective contact fungicides.",
+    "yellow_leaf_curl": "Vector-borne viral infection spread by whiteflies. Use yellow sticky traps, insect netting, and rogue infected plants.",
+    "mosaic_virus": "Viral pathology with no cure. Remove and burn infected specimens immediately; disinfect all garden tools.",
+    "scab": "Clear leaf litter around tree base. Spray wettable sulfur or captan at bud break and petal fall.",
+    "black_rot": "Prune mummified fruit and dead wood. Spray myclobutanil early in the growing season.",
+    "cedar_apple_rust": "Remove nearby wild juniper/cedar galls within 500m. Apply immunox or protective rust fungicides.",
+    "powdery_mildew": "Apply potassium bicarbonate or sulfur spray. Ensure at least 6 hours of direct sunlight and canopy thinning.",
+    "rust": "Apply triazole or strobilurin fungicides; plant rust-resistant hybrid seed varieties.",
+    "leaf_scorch": "Deep water during dry spells; apply potassium-rich fertilizer and protect from harsh midday winds."
+  },
+  "formatted": [
+    {
+      "crop": "Apple",
+      "condition": "Apple Scab",
+      "is_healthy": false,
+      "treatment": "Clear leaf litter around tree base. Spray wettable sulfur or captan at bud break and petal fall."
+    },
+    {
+      "crop": "Apple",
+      "condition": "Black Rot",
+      "is_healthy": false,
+      "treatment": "Prune mummified fruit and dead wood. Spray myclobutanil early in the growing season."
+    },
+    {
+      "crop": "Apple",
+      "condition": "Cedar Apple Rust",
+      "is_healthy": false,
+      "treatment": "Remove nearby wild juniper/cedar galls within 500m. Apply immunox or protective rust fungicides."
+    },
+    {
+      "crop": "Apple",
+      "condition": "Healthy Leaf",
+      "is_healthy": true,
+      "treatment": "Optimal plant vigor detected. Continue standard drip irrigation and balanced nitrogen-phosphorus-potassium nutrition."
+    },
+    {
+      "crop": "Blueberry",
+      "condition": "Healthy Leaf",
+      "is_healthy": true,
+      "treatment": "Optimal plant vigor detected. Continue standard drip irrigation and balanced nitrogen-phosphorus-potassium nutrition."
+    },
+    {
+      "crop": "Cherry",
+      "condition": "Powdery Mildew",
+      "is_healthy": false,
+      "treatment": "Apply potassium bicarbonate or sulfur spray. Ensure at least 6 hours of direct sunlight and canopy thinning."
+    },
+    {
+      "crop": "Cherry",
+      "condition": "Healthy Leaf",
+      "is_healthy": true,
+      "treatment": "Optimal plant vigor detected. Continue standard drip irrigation and balanced nitrogen-phosphorus-potassium nutrition."
+    },
+    {
+      "crop": "Corn (Maize)",
+      "condition": "Cercospora Leaf Spot Gray Leaf Spot",
+      "is_healthy": false,
+      "treatment": "Optimal plant vigor detected. Continue standard drip irrigation and balanced nitrogen-phosphorus-potassium nutrition."
+    },
+    {
+      "crop": "Corn (Maize)",
+      "condition": "Common Rust ",
+      "is_healthy": false,
+      "treatment": "Apply triazole or strobilurin fungicides; plant rust-resistant hybrid seed varieties."
+    },
+    {
+      "crop": "Corn (Maize)",
+      "condition": "Northern Leaf Blight",
+      "is_healthy": false,
+      "treatment": "Optimal plant vigor detected. Continue standard drip irrigation and balanced nitrogen-phosphorus-potassium nutrition."
+    },
+    {
+      "crop": "Corn (Maize)",
+      "condition": "Healthy Leaf",
+      "is_healthy": true,
+      "treatment": "Optimal plant vigor detected. Continue standard drip irrigation and balanced nitrogen-phosphorus-potassium nutrition."
+    },
+    {
+      "crop": "Grape",
+      "condition": "Black Rot",
+      "is_healthy": false,
+      "treatment": "Prune mummified fruit and dead wood. Spray myclobutanil early in the growing season."
+    },
+    {
+      "crop": "Grape",
+      "condition": "Esca (Black Measles)",
+      "is_healthy": false,
+      "treatment": "Optimal plant vigor detected. Continue standard drip irrigation and balanced nitrogen-phosphorus-potassium nutrition."
+    },
+    {
+      "crop": "Grape",
+      "condition": "Leaf Blight (Isariopsis Leaf Spot)",
+      "is_healthy": false,
+      "treatment": "Optimal plant vigor detected. Continue standard drip irrigation and balanced nitrogen-phosphorus-potassium nutrition."
+    },
+    {
+      "crop": "Grape",
+      "condition": "Healthy Leaf",
+      "is_healthy": true,
+      "treatment": "Optimal plant vigor detected. Continue standard drip irrigation and balanced nitrogen-phosphorus-potassium nutrition."
+    },
+    {
+      "crop": "Orange",
+      "condition": "Haunglongbing (Citrus Greening)",
+      "is_healthy": false,
+      "treatment": "Optimal plant vigor detected. Continue standard drip irrigation and balanced nitrogen-phosphorus-potassium nutrition."
+    },
+    {
+      "crop": "Peach",
+      "condition": "Bacterial Spot",
+      "is_healthy": false,
+      "treatment": "Prune symptomatic leaves. Apply copper bactericides during damp weather and avoid overhead sprinkler watering."
+    },
+    {
+      "crop": "Peach",
+      "condition": "Healthy Leaf",
+      "is_healthy": true,
+      "treatment": "Optimal plant vigor detected. Continue standard drip irrigation and balanced nitrogen-phosphorus-potassium nutrition."
+    },
+    {
+      "crop": "Bell Pepper",
+      "condition": "Bacterial Spot",
+      "is_healthy": false,
+      "treatment": "Prune symptomatic leaves. Apply copper bactericides during damp weather and avoid overhead sprinkler watering."
+    },
+    {
+      "crop": "Bell Pepper",
+      "condition": "Healthy Leaf",
+      "is_healthy": true,
+      "treatment": "Optimal plant vigor detected. Continue standard drip irrigation and balanced nitrogen-phosphorus-potassium nutrition."
+    },
+    {
+      "crop": "Potato",
+      "condition": "Early Blight",
+      "is_healthy": false,
+      "treatment": "Remove lower infected foliage. Apply chlorothalonil or copper-based fungicides; mulch soil to prevent spore splash."
+    },
+    {
+      "crop": "Potato",
+      "condition": "Late Blight",
+      "is_healthy": false,
+      "treatment": "High urgency: isolate infected plants immediately. Apply systemic fungicides (mancozeb/cymoxanil) and destroy severely wilted crops."
+    },
+    {
+      "crop": "Potato",
+      "condition": "Healthy Leaf",
+      "is_healthy": true,
+      "treatment": "Optimal plant vigor detected. Continue standard drip irrigation and balanced nitrogen-phosphorus-potassium nutrition."
+    },
+    {
+      "crop": "Raspberry",
+      "condition": "Healthy Leaf",
+      "is_healthy": true,
+      "treatment": "Optimal plant vigor detected. Continue standard drip irrigation and balanced nitrogen-phosphorus-potassium nutrition."
+    },
+    {
+      "crop": "Soybean",
+      "condition": "Healthy Leaf",
+      "is_healthy": true,
+      "treatment": "Optimal plant vigor detected. Continue standard drip irrigation and balanced nitrogen-phosphorus-potassium nutrition."
+    },
+    {
+      "crop": "Squash",
+      "condition": "Powdery Mildew",
+      "is_healthy": false,
+      "treatment": "Apply potassium bicarbonate or sulfur spray. Ensure at least 6 hours of direct sunlight and canopy thinning."
+    },
+    {
+      "crop": "Strawberry",
+      "condition": "Leaf Scorch",
+      "is_healthy": false,
+      "treatment": "Deep water during dry spells; apply potassium-rich fertilizer and protect from harsh midday winds."
+    },
+    {
+      "crop": "Strawberry",
+      "condition": "Healthy Leaf",
+      "is_healthy": true,
+      "treatment": "Optimal plant vigor detected. Continue standard drip irrigation and balanced nitrogen-phosphorus-potassium nutrition."
+    },
+    {
+      "crop": "Tomato",
+      "condition": "Bacterial Spot",
+      "is_healthy": false,
+      "treatment": "Prune symptomatic leaves. Apply copper bactericides during damp weather and avoid overhead sprinkler watering."
+    },
+    {
+      "crop": "Tomato",
+      "condition": "Early Blight",
+      "is_healthy": false,
+      "treatment": "Remove lower infected foliage. Apply chlorothalonil or copper-based fungicides; mulch soil to prevent spore splash."
+    },
+    {
+      "crop": "Tomato",
+      "condition": "Late Blight",
+      "is_healthy": false,
+      "treatment": "High urgency: isolate infected plants immediately. Apply systemic fungicides (mancozeb/cymoxanil) and destroy severely wilted crops."
+    },
+    {
+      "crop": "Tomato",
+      "condition": "Leaf Mold",
+      "is_healthy": false,
+      "treatment": "Improve greenhouse airflow and lower relative humidity below 85%. Treat with bio-fungicides like Bacillus subtilis."
+    },
+    {
+      "crop": "Tomato",
+      "condition": "Septoria Leaf Spot",
+      "is_healthy": false,
+      "treatment": "Strip infected lower foliage, sanitize pruning shears, and apply preventative organic neem or copper sprays."
+    },
+    {
+      "crop": "Tomato",
+      "condition": "Spider Mites Two-Spotted Spider Mite",
+      "is_healthy": false,
+      "treatment": "Spray with cold water blast or apply horticultural neem oil / insecticidal soap directly to leaf undersides."
+    },
+    {
+      "crop": "Tomato",
+      "condition": "Target Spot",
+      "is_healthy": false,
+      "treatment": "Ensure adequate spacing for light penetration; apply azoxystrobin or protective contact fungicides."
+    },
+    {
+      "crop": "Tomato",
+      "condition": "Tomato Yellow Leaf Curl Virus",
+      "is_healthy": false,
+      "treatment": "Vector-borne viral infection spread by whiteflies. Use yellow sticky traps, insect netting, and rogue infected plants."
+    },
+    {
+      "crop": "Tomato",
+      "condition": "Tomato Mosaic Virus",
+      "is_healthy": false,
+      "treatment": "Viral pathology with no cure. Remove and burn infected specimens immediately; disinfect all garden tools."
+    },
+    {
+      "crop": "Tomato",
+      "condition": "Healthy Leaf",
+      "is_healthy": true,
+      "treatment": "Optimal plant vigor detected. Continue standard drip irrigation and balanced nitrogen-phosphorus-potassium nutrition."
+    }
+  ]
+}

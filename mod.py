@@ -1,12 +1,15 @@
 import os
+import json
 import pickle
 import numpy as np
 import cv2
-from tensorflow.keras.preprocessing.image import img_to_array
+import onnxruntime as ort
 
 default_image_size = (256, 256)
-_model = None
+_session = None
 _label_binarizer = None
+_input_name = None
+_output_name = None
 
 TREATMENTS = {
     "healthy": "Optimal plant vigor detected. Continue standard drip irrigation and balanced nitrogen-phosphorus-potassium nutrition.",
@@ -28,7 +31,6 @@ TREATMENTS = {
 }
 
 def format_condition_name(raw_label):
-    # e.g. "Tomato___Early_blight" -> ("Tomato", "Early Blight", False)
     clean = raw_label.replace("__", "_").replace(",", "")
     parts = clean.split("_")
     
@@ -65,7 +67,7 @@ def convert_image_to_array(image_dir):
         image = cv2.imread(image_dir)
         if image is not None:
             image = cv2.resize(image, default_image_size)
-            return img_to_array(image)
+            return image.astype(np.float32)
         else:
             return np.array([])
     except Exception as e:
@@ -73,45 +75,58 @@ def convert_image_to_array(image_dir):
         return None
 
 def get_resources():
-    global _model, _label_binarizer
-    if _model is None or _label_binarizer is None:
-        if not os.path.exists("label_transform.pkl"):
-            raise FileNotFoundError("label_transform.pkl not found. Please train the model first.")
-        if not os.path.exists("cnn_model.pkl"):
-            raise FileNotFoundError("cnn_model.pkl not found. Please train the model first.")
+    global _session, _label_binarizer, _input_name, _output_name
+    if _session is None or _label_binarizer is None:
+        model_path = os.path.join("static", "model", "model.onnx")
+        if not os.path.exists(model_path):
+            raise FileNotFoundError(f"ONNX Model not found at {model_path}.")
         
-        with open("label_transform.pkl", "rb") as f:
-            _label_binarizer = pickle.load(f)
-        with open("cnn_model.pkl", "rb") as f:
-            _model = pickle.load(f)
-    return _model, _label_binarizer
+        _session = ort.InferenceSession(model_path, providers=['CPUExecutionProvider'])
+        _input_name = _session.get_inputs()[0].name
+        _output_name = _session.get_outputs()[0].name
+        
+        labels_json_path = os.path.join("static", "model", "labels.json")
+        if os.path.exists(labels_json_path):
+            with open(labels_json_path, "r") as f:
+                data = json.load(f)
+                _label_binarizer = data["classes"]
+        elif os.path.exists("label_transform.pkl"):
+            with open("label_transform.pkl", "rb") as f:
+                lb = pickle.load(f)
+                _label_binarizer = [str(c) for c in lb.classes_]
+        else:
+            raise FileNotFoundError("Class labels not found.")
+
+    return _session, _label_binarizer, _input_name, _output_name
 
 def check(image_dir):
-    model, label_binarizer = get_resources()
+    session, classes, input_name, output_name = get_resources()
     im = convert_image_to_array(image_dir)
     if im is None or len(im) == 0:
         return "Invalid Image"
-    np_image_li = np.array(im, dtype=np.float32) / 255.0
+    
+    np_image_li = im / 255.0
     npp_image = np.expand_dims(np_image_li, axis=0)
-    result = model.predict(npp_image, verbose=0)
-    itemindex = np.where(result == np.max(result))
-    prediction = label_binarizer.classes_[itemindex[1][0]]
-    return prediction
+    
+    preds = session.run([output_name], {input_name: npp_image})[0][0]
+    top_idx = int(np.argmax(preds))
+    return str(classes[top_idx])
 
 def predict_detailed(image_dir):
-    model, label_binarizer = get_resources()
+    session, classes, input_name, output_name = get_resources()
     im = convert_image_to_array(image_dir)
     if im is None or len(im) == 0:
         return {"error": "Invalid image"}
     
-    np_image_li = np.array(im, dtype=np.float32) / 255.0
+    np_image_li = im / 255.0
     npp_image = np.expand_dims(np_image_li, axis=0)
-    probs = model.predict(npp_image, verbose=0)[0]
+    
+    probs = session.run([output_name], {input_name: npp_image})[0][0]
     
     top_indices = np.argsort(probs)[::-1][:3]
     top_classes = []
     for idx in top_indices:
-        raw = str(label_binarizer.classes_[idx])
+        raw = str(classes[idx])
         fmt = format_condition_name(raw)
         top_classes.append({
             "raw": raw,
