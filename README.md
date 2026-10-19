@@ -4,8 +4,7 @@ emoji: 🌿
 colorFrom: green
 colorTo: blue
 sdk: static
-app_build_command: npm run build
-app_file: dist/index.html
+app_file: index.html
 pinned: false
 ---
 
