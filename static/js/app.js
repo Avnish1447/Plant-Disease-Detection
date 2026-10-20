@@ -217,13 +217,8 @@ document.addEventListener('DOMContentLoaded', () => {
     return modelLoadPromise;
   }
 
-  // In Server Mode, the backend handles the 55MB model.
-  // The client browser never downloads the 55MB model.
-  if (hudBadge) {
-    hudBadge.className = 'hud-badge idle';
-    hudBadge.innerHTML = '<i data-lucide="cpu" style="width: 14px; height: 14px;"></i> Server Ready';
-    if (window.lucide) lucide.createIcons();
-  }
+  // Pre-load model immediately on page load
+  initInBrowserModel();
 
   async function predictImageInBrowser(imgElement) {
     if (modelLoading) {
@@ -351,8 +346,18 @@ document.addEventListener('DOMContentLoaded', () => {
     const reader = new FileReader();
     reader.onload = (e) => {
       showPreview(e.target.result);
-      // Directly send to Python backend server (No 55MB client-side model download!)
-      runAnalysisWithServer(file);
+      
+      const tempImg = new Image();
+      tempImg.onload = async () => {
+        try {
+          const result = await predictImageInBrowser(tempImg);
+          displayResults(result);
+        } catch (err) {
+          console.warn('In-browser inference failed, trying fallback:', err);
+          runAnalysisWithServer(file);
+        }
+      };
+      tempImg.src = e.target.result;
     };
     reader.readAsDataURL(file);
   }
@@ -363,8 +368,8 @@ document.addEventListener('DOMContentLoaded', () => {
     lidarScanline.style.display = 'block';
     hudBadge.className = 'hud-badge idle';
     hudBadge.innerHTML = '<span class="pulse-dot"></span> Analyzing';
-    readoutCrop.textContent = 'Neural Inference in Progress...';
-    readoutDiagnosis.textContent = 'Processing via Server Engine...';
+    readoutCrop.textContent = 'Spectrometric Scan in Progress...';
+    readoutDiagnosis.textContent = 'Processing Foliage Pixels...';
   }
 
   async function runAnalysisWithServer(file) {
@@ -387,7 +392,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   }
 
-  // Quick Test Sample Function (Server-Side Inference)
+  // Quick Test Sample Function
   window.testSample = async function(sampleFileName, chipElement) {
     document.querySelectorAll('.sample-chip').forEach(c => c.classList.remove('active'));
     if (chipElement) chipElement.classList.add('active');
@@ -395,21 +400,18 @@ document.addEventListener('DOMContentLoaded', () => {
     const sampleUrl = getAssetUrl(`static/samples/${sampleFileName}`);
     showPreview(sampleUrl);
 
-    try {
-      const response = await fetch('/api/predict', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ sample: sampleFileName })
-      });
-      const res = await response.json();
-      if (res.success) {
-        displayResults(res.data);
-      } else {
-        showError(res.error || 'Failed to process sample');
+    const tempImg = new Image();
+    tempImg.crossOrigin = 'anonymous';
+    tempImg.onload = async () => {
+      try {
+        const result = await predictImageInBrowser(tempImg);
+        displayResults(result);
+      } catch (err) {
+        console.warn('In-browser sample inference failed, trying fallback:', err);
+        showError(err.message);
       }
-    } catch (err) {
-      showError('Diagnosis Notice: ' + err.message);
-    }
+    };
+    tempImg.src = sampleUrl;
   };
 
   function displayResults(data) {
