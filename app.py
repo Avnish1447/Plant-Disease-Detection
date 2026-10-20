@@ -5,6 +5,17 @@ from mod import check, predict_detailed
 
 app = Flask(__name__)
 
+@app.after_request
+def add_cors_headers(response):
+    response.headers['Access-Control-Allow-Origin'] = '*'
+    response.headers['Access-Control-Allow-Headers'] = 'Content-Type,Authorization,X-Requested-With'
+    response.headers['Access-Control-Allow-Methods'] = 'GET,POST,OPTIONS'
+    return response
+
+@app.route('/health', methods=["GET"])
+def health():
+    return jsonify({"status": "healthy"}), 200
+
 upload_folder = os.path.join('static', 'uploads')
 os.makedirs(upload_folder, exist_ok=True)
 app.config['UPLOAD'] = upload_folder
@@ -35,8 +46,11 @@ def index():
 
     return render_template('index.html')
 
-@app.route('/api/predict', methods=["POST"])
+@app.route('/api/predict', methods=["POST", "OPTIONS"])
 def api_predict():
+    if request.method == "OPTIONS":
+        return jsonify({"status": "ok"}), 200
+
     # Handle sample selection
     if request.is_json:
         data = request.get_json()
@@ -84,4 +98,5 @@ def get_samples():
     return jsonify({"samples": samples})
 
 if __name__ == '__main__':
-    app.run(debug=True, port=5000)
+    port = int(os.environ.get('PORT', 5000))
+    app.run(host='0.0.0.0', port=port, debug=False)
