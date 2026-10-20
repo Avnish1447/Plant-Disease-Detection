@@ -217,10 +217,18 @@ document.addEventListener('DOMContentLoaded', () => {
     return modelLoadPromise;
   }
 
-  // Pre-load model immediately on page load
-  initInBrowserModel();
+  // Do NOT download 55MB model on page load.
+  // The server handles inference by default (zero client download).
+  if (hudBadge) {
+    hudBadge.className = 'hud-badge idle';
+    hudBadge.innerHTML = '<i data-lucide="cpu" style="width: 14px; height: 14px;"></i> Ready';
+    if (window.lucide) lucide.createIcons();
+  }
 
   async function predictImageInBrowser(imgElement) {
+    if (!modelLoadPromise) {
+      initInBrowserModel();
+    }
     if (modelLoading) {
       showLoadingModelNotice();
       await modelLoadPromise;
@@ -344,17 +352,21 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     const reader = new FileReader();
-    reader.onload = (e) => {
+    reader.onload = async (e) => {
       showPreview(e.target.result);
       
+      // 1. Try server-side inference first (Fast, no 55MB model download!)
+      const serverHandled = await runAnalysisWithServer(file);
+      if (serverHandled) return;
+
+      // 2. Fallback to in-browser inference only if server is unreachable
       const tempImg = new Image();
       tempImg.onload = async () => {
         try {
           const result = await predictImageInBrowser(tempImg);
           displayResults(result);
         } catch (err) {
-          console.warn('In-browser inference failed, trying fallback:', err);
-          runAnalysisWithServer(file);
+          showError('Diagnosis Notice: ' + err.message);
         }
       };
       tempImg.src = e.target.result;
@@ -381,18 +393,20 @@ document.addEventListener('DOMContentLoaded', () => {
         method: 'POST',
         body: formData
       });
+      if (!response.ok) return false;
       const res = await response.json();
-      if (res.success) {
+      if (res.success && res.data) {
         displayResults(res.data);
-      } else {
-        showError(res.error || 'Failed to process image');
+        return true;
       }
+      return false;
     } catch (err) {
-      showError('Diagnosis Notice: ' + err.message);
+      console.warn('Server inference unavailable, falling back:', err);
+      return false;
     }
   }
 
-  // Quick Test Sample Function
+  // Quick Test Sample Function (Server-First)
   window.testSample = async function(sampleFileName, chipElement) {
     document.querySelectorAll('.sample-chip').forEach(c => c.classList.remove('active'));
     if (chipElement) chipElement.classList.add('active');
@@ -400,6 +414,25 @@ document.addEventListener('DOMContentLoaded', () => {
     const sampleUrl = getAssetUrl(`static/samples/${sampleFileName}`);
     showPreview(sampleUrl);
 
+    // 1. Try server-side sample inference first
+    try {
+      const response = await fetch('/api/predict', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ sample: sampleFileName })
+      });
+      if (response.ok) {
+        const res = await response.json();
+        if (res.success && res.data) {
+          displayResults(res.data);
+          return;
+        }
+      }
+    } catch (err) {
+      console.warn('Server sample inference failed, falling back:', err);
+    }
+
+    // 2. Fallback to in-browser inference only if server is unreachable
     const tempImg = new Image();
     tempImg.crossOrigin = 'anonymous';
     tempImg.onload = async () => {
@@ -407,7 +440,6 @@ document.addEventListener('DOMContentLoaded', () => {
         const result = await predictImageInBrowser(tempImg);
         displayResults(result);
       } catch (err) {
-        console.warn('In-browser sample inference failed, trying fallback:', err);
         showError(err.message);
       }
     };
