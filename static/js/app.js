@@ -153,6 +153,98 @@ document.addEventListener('DOMContentLoaded', () => {
       stagger: 0.025,
       ease: 'back.out(1.6)'
     });
+
+    // =========================================================
+    // BIOLUMINESCENT CYBER-BOTANICAL VINES & BLOOMS SCROLL ENGINE
+    // =========================================================
+    const leftStem = document.querySelector('.vine-stem-left');
+    const rightStem = document.querySelector('.vine-stem-right');
+
+    if (leftStem || rightStem) {
+      const vineMasterTimeline = gsap.timeline({
+        scrollTrigger: {
+          trigger: document.body,
+          start: 'top top',
+          end: 'bottom bottom',
+          scrub: 1.2
+        }
+      });
+
+      // 1. Vine Stems Growth Scrub (Draws from top to bottom)
+      vineMasterTimeline.to('.vine-stem-left, .vine-stem-right', {
+        strokeDashoffset: 0,
+        ease: 'none',
+        duration: 1
+      }, 0);
+
+      // 2. Tendrils Uncurling & Coiling
+      vineMasterTimeline.to('.vine-tendril', {
+        strokeDashoffset: 0,
+        ease: 'power1.out',
+        stagger: 0.08,
+        duration: 0.8
+      }, 0.05);
+
+      // 3. Foliar Leaves Sprouting along the stems
+      gsap.utils.toArray('.bio-leaf-group').forEach((leaf) => {
+        const depth = parseFloat(leaf.getAttribute('data-depth') || '0.5');
+        vineMasterTimeline.fromTo(leaf,
+          { scale: 0, opacity: 0 },
+          { scale: 1, opacity: 1, duration: 0.12, ease: 'back.out(2)' },
+          Math.max(0, depth - 0.04)
+        );
+      });
+
+      // 4. Cyber-Botanical Blossoms Blooming (Unfurling petals, stamen emergence, aura flare)
+      gsap.utils.toArray('.bio-flower').forEach((flower) => {
+        const depth = parseFloat(flower.getAttribute('data-depth') || '0.5');
+        const petals = flower.querySelectorAll('.bio-petal');
+        const stamens = flower.querySelector('.flower-stamens');
+        const aura = flower.querySelector('.flower-aura');
+        const core = flower.querySelector('.flower-core');
+
+        // Flower Bud Initial Expansion
+        vineMasterTimeline.fromTo(flower,
+          { scale: 0.15, opacity: 0.2 },
+          { scale: 1, opacity: 1, duration: 0.14, ease: 'back.out(2.2)' },
+          Math.max(0, depth - 0.06)
+        );
+
+        // Radiant Petal Unfurling with Rotational Swirl
+        vineMasterTimeline.fromTo(petals,
+          { scale: 0.1, rotate: -30, opacity: 0.4 },
+          { scale: 1, rotate: 0, opacity: 1, stagger: 0.02, duration: 0.18, ease: 'power2.out' },
+          Math.max(0, depth - 0.04)
+        );
+
+        // Cyber Stamens Springing Forward
+        if (stamens) {
+          vineMasterTimeline.fromTo(stamens,
+            { scale: 0, opacity: 0 },
+            { scale: 1, opacity: 1, duration: 0.12, ease: 'back.out(3)' },
+            depth
+          );
+        }
+
+        // Ambient Aura Halo Surge
+        if (aura) {
+          vineMasterTimeline.fromTo(aura,
+            { scale: 0.2, opacity: 0 },
+            { scale: 1.25, opacity: 0.65, duration: 0.18, ease: 'sine.out' },
+            depth
+          );
+        }
+
+        // Luminous Core Flare
+        if (core) {
+          vineMasterTimeline.fromTo(core,
+            { scale: 0.4 },
+            { scale: 1.15, duration: 0.15, ease: 'back.out(2)' },
+            depth
+          );
+        }
+      });
+    }
   }
 
   // 4. Leaf Diagnosis Workbench Logic (Server-Powered Foliar Inference)
