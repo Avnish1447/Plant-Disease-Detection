@@ -172,7 +172,6 @@ document.addEventListener('DOMContentLoaded', () => {
   const candidatesContainer = document.getElementById('candidatesContainer');
 
   // Apple-grade Interactive Action Controls
-  const btnTestAnother = document.getElementById('btnTestAnother');
   const btnClearPreview = document.getElementById('btnClearPreview');
   const btnTestAnotherHud = document.getElementById('btnTestAnotherHud');
   const readoutActions = document.getElementById('readoutActions');
@@ -215,7 +214,7 @@ document.addEventListener('DOMContentLoaded', () => {
     if (previewContainer) previewContainer.style.display = 'block';
     if (lidarScanline) lidarScanline.style.display = 'block';
     if (previewStatusLabel) previewStatusLabel.textContent = 'Diagnosing Specimen';
-    if (readoutActions) readoutActions.style.display = 'none';
+    if (readoutActions) readoutActions.style.display = 'block';
     if (hudBadge) {
       hudBadge.className = 'hud-badge idle';
       hudBadge.innerHTML = '<span class="pulse-dot"></span> Analyzing';
@@ -396,15 +395,7 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
-  // Apple Action Controls: Test Another Leaf & Reset Workbench
-  if (btnTestAnother) {
-    btnTestAnother.addEventListener('click', (e) => {
-      e.preventDefault();
-      e.stopPropagation();
-      if (fileInput) fileInput.click();
-    });
-  }
-
+  // Apple Action Controls: Diagnose Another Leaf & Reset Workbench
   if (btnTestAnotherHud) {
     btnTestAnotherHud.addEventListener('click', (e) => {
       e.preventDefault();
