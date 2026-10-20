@@ -1,0 +1,8 @@
+# Offline training dependencies (for train.py and main.ipynb)
+Flask>=1.1.2
+numpy>=1.19.2
+opencv-python>=4.5.1.48
+tensorflow
+keras>=2.4.3
+scikit-learn>=0.24.1
+matplotlib>=3.3.4
