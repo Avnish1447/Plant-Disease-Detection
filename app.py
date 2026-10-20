@@ -1,5 +1,6 @@
 import os
-import shutil
+import uuid
+from werkzeug.utils import secure_filename
 from flask import Flask, render_template, request, jsonify
 from mod import check, predict_detailed
 
@@ -10,6 +11,11 @@ def add_cors_headers(response):
     response.headers['Access-Control-Allow-Origin'] = '*'
     response.headers['Access-Control-Allow-Headers'] = 'Content-Type,Authorization,X-Requested-With'
     response.headers['Access-Control-Allow-Methods'] = 'GET,POST,OPTIONS'
+    # Prevent browser caching of HTML and JS so deployments take effect immediately
+    if request.path.endswith('.js') or request.path.endswith('.html') or request.path == '/':
+        response.headers['Cache-Control'] = 'no-cache, no-store, must-revalidate'
+        response.headers['Pragma'] = 'no-cache'
+        response.headers['Expires'] = '0'
     return response
 
 @app.route('/health', methods=["GET"])
@@ -29,8 +35,9 @@ def index():
                 return jsonify({"error": "No file selected."}), 400
             return render_template('index.html', error="No file selected.")
 
-        filename = file.filename
-        file_path = os.path.join(app.config['UPLOAD'], filename)
+        safe_name = secure_filename(file.filename) or "upload.jpg"
+        unique_name = f"{uuid.uuid4().hex[:12]}_{safe_name}"
+        file_path = os.path.join(app.config['UPLOAD'], unique_name)
         file.save(file_path)
 
         details = predict_detailed(file_path)
@@ -39,10 +46,10 @@ def index():
             return jsonify({
                 "success": True,
                 "data": details,
-                "image": file_path
+                "image": "/" + file_path.replace("\\", "/")
             })
 
-        return render_template('index.html', prediction=details["raw_label"], details=details, image=file_path)
+        return render_template('index.html', prediction=details.get("raw_label", ""), details=details, image="/" + file_path.replace("\\", "/"))
 
     return render_template('index.html')
 
@@ -51,36 +58,51 @@ def api_predict():
     if request.method == "OPTIONS":
         return jsonify({"status": "ok"}), 200
 
-    # Handle sample selection
+    # 1. Handle sample selection (JSON or FormData)
+    sample_name = None
     if request.is_json:
-        data = request.get_json()
+        data = request.get_json() or {}
         sample_name = data.get("sample")
-        if sample_name:
-            sample_path = os.path.join('static', 'samples', os.path.basename(sample_name))
-            if os.path.exists(sample_path):
+    elif request.form.get("sample"):
+        sample_name = request.form.get("sample")
+
+    if sample_name:
+        safe_sample = os.path.basename(sample_name)
+        sample_path = os.path.join('static', 'samples', safe_sample)
+        if os.path.exists(sample_path):
+            try:
                 details = predict_detailed(sample_path)
                 return jsonify({
                     "success": True,
                     "data": details,
-                    "image": sample_path
-                })
-            return jsonify({"error": "Sample not found"}), 404
+                    "image": "/" + sample_path.replace("\\", "/")
+                }), 200
+            except Exception as e:
+                return jsonify({"success": False, "error": f"Model inference error: {str(e)}"}), 500
+        return jsonify({"success": False, "error": f"Sample '{safe_sample}' not found"}), 404
 
-    # Handle file upload
+    # 2. Handle uploaded file
     file = request.files.get('image')
     if not file or file.filename == '':
-        return jsonify({"error": "No image uploaded"}), 400
+        return jsonify({"success": False, "error": "No image uploaded"}), 400
 
-    filename = file.filename
-    file_path = os.path.join(app.config['UPLOAD'], filename)
-    file.save(file_path)
+    try:
+        safe_name = secure_filename(file.filename) or "upload.jpg"
+        unique_name = f"{uuid.uuid4().hex[:12]}_{safe_name}"
+        file_path = os.path.join(app.config['UPLOAD'], unique_name)
+        file.save(file_path)
 
-    details = predict_detailed(file_path)
-    return jsonify({
-        "success": True,
-        "data": details,
-        "image": file_path
-    })
+        details = predict_detailed(file_path)
+        if isinstance(details, dict) and "error" in details:
+            return jsonify({"success": False, "error": details["error"]}), 400
+
+        return jsonify({
+            "success": True,
+            "data": details,
+            "image": "/" + file_path.replace("\\", "/")
+        }), 200
+    except Exception as e:
+        return jsonify({"success": False, "error": f"Server diagnosis error: {str(e)}"}), 500
 
 @app.route('/api/samples', methods=["GET"])
 def get_samples():

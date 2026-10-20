@@ -11,8 +11,8 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
   
-  <!-- Stylesheet -->
-  <link rel="stylesheet" href="static/css/style.css">
+  <!-- Stylesheet (Cache-busted) -->
+  <link rel="stylesheet" href="/static/css/style.css?v=3.0.0">
 
   <!-- Lenis Smooth Scroll -->
   <script src="https://unpkg.com/lenis@1.1.18/dist/lenis.min.js"></script>
@@ -23,9 +23,6 @@
 
   <!-- Lucide Icons -->
   <script src="https://unpkg.com/lucide@latest"></script>
-
-  <!-- ONNX Runtime Web for In-Browser Edge AI -->
-  <script src="https://cdn.jsdelivr.net/npm/onnxruntime-web/dist/ort.min.js"></script>
 </head>
 <body>
 
@@ -366,7 +363,7 @@
     </div>
   </footer>
 
-  <!-- Application Script -->
-  <script type="module" src="./static/js/app.js"></script>
+  <!-- Application Script (Cache-busted) -->
+  <script type="module" src="/static/js/app.js?v=3.0.0"></script>
 </body>
 </html>

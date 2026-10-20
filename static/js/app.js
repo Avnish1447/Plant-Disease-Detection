@@ -155,154 +155,8 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
-  // 4. In-Browser Edge AI (ONNX Runtime Web Engine)
-  // Dynamic Base Path resolution for GitHub Pages subpaths and Vercel/localhost
-  function getAssetUrl(relativePath) {
-    const currentPath = window.location.pathname;
-    const baseDir = currentPath.substring(0, currentPath.lastIndexOf('/') + 1);
-    return new URL(relativePath, window.location.origin + baseDir).href;
-  }
-
-  let ortSession = null;
-  let labelsMeta = null;
-  let modelLoading = false;
-  let modelLoadPromise = null;
-
-  async function initInBrowserModel() {
-    if (!window.ort) {
-      console.warn('ONNX Runtime Web script not available on window.');
-      return;
-    }
-    if (modelLoadPromise) return modelLoadPromise;
-
-    modelLoadPromise = (async () => {
-      try {
-        modelLoading = true;
-        
-        // Critical: Set WASM engine CDN paths for GitHub Pages subpaths
-        if (ort.env && ort.env.wasm) {
-          ort.env.wasm.numThreads = 1; // Single-thread mode for maximum cross-origin compatibility
-          ort.env.wasm.wasmPaths = 'https://cdn.jsdelivr.net/npm/onnxruntime-web/dist/';
-        }
-        
-        // Primary: Hugging Face Model Hub CDN (CORS & Range Request Enabled)
-        const HF_BASE = 'https://huggingface.co/Av1447/plant-disease-model/resolve/main';
-        const labelsUrl = `${HF_BASE}/labels.json`;
-        const modelUrl = `${HF_BASE}/model.onnx`;
-
-        console.log(`[FloraAI] Loading taxonomy from Hugging Face CDN: ${labelsUrl}`);
-        const labelsRes = await fetch(labelsUrl);
-        if (!labelsRes.ok) throw new Error(`HTTP ${labelsRes.status} loading labels.json`);
-        labelsMeta = await labelsRes.json();
-
-        console.log(`[FloraAI] Downloading neural model (~55MB) from: ${modelUrl}`);
-        ortSession = await ort.InferenceSession.create(modelUrl, {
-          executionProviders: ['wasm']
-        });
-
-        console.log('[FloraAI] Model loaded successfully into WebAssembly engine!');
-        modelLoading = false;
-        
-        // Update HUD badge to ready if waiting
-        if (hudBadge && hudBadge.classList.contains('idle')) {
-          hudBadge.innerHTML = '<i data-lucide="cpu" style="width: 14px; height: 14px;"></i> Ready';
-          if (window.lucide) lucide.createIcons();
-        }
-      } catch (e) {
-        console.error('[FloraAI] Model initialization error:', e);
-        modelLoading = false;
-      }
-    })();
-
-    return modelLoadPromise;
-  }
-
-  // Do NOT download 55MB model on page load.
-  // The server handles inference by default (zero client download).
-  if (hudBadge) {
-    hudBadge.className = 'hud-badge idle';
-    hudBadge.innerHTML = '<i data-lucide="cpu" style="width: 14px; height: 14px;"></i> Ready';
-    if (window.lucide) lucide.createIcons();
-  }
-
-  async function predictImageInBrowser(imgElement) {
-    if (!modelLoadPromise) {
-      initInBrowserModel();
-    }
-    if (modelLoading) {
-      showLoadingModelNotice();
-      await modelLoadPromise;
-    }
-
-    if (!ortSession || !labelsMeta) {
-      throw new Error('Neural model is still initializing. Please wait a few seconds.');
-    }
-
-    const canvas = document.createElement('canvas');
-    canvas.width = 256;
-    canvas.height = 256;
-    const ctx = canvas.getContext('2d');
-    ctx.drawImage(imgElement, 0, 0, 256, 256);
-
-    const imageData = ctx.getImageData(0, 0, 256, 256);
-    const data = imageData.data;
-
-    // Tensor shape: [1, 256, 256, 3] Float32 normalized to [0, 1]
-    const float32Data = new Float32Array(1 * 256 * 256 * 3);
-    let p = 0;
-    for (let i = 0; i < data.length; i += 4) {
-      float32Data[p++] = data[i] / 255.0;     // R
-      float32Data[p++] = data[i + 1] / 255.0; // G
-      float32Data[p++] = data[i + 2] / 255.0; // B
-    }
-
-    const inputTensor = new ort.Tensor('float32', float32Data, [1, 256, 256, 3]);
-    const inputName = ortSession.inputNames[0];
-    const outputName = ortSession.outputNames[0];
-    const feeds = { [inputName]: inputTensor };
-    
-    const outputMap = await ortSession.run(feeds);
-    const outputTensor = outputMap[outputName];
-    const probs = Array.from(outputTensor.data);
-
-    // Compute top 3
-    const indices = probs.map((prob, idx) => ({ prob, idx }))
-                         .sort((a, b) => b.prob - a.prob)
-                         .slice(0, 3);
-
-    const topClasses = indices.map(item => {
-      const fmt = labelsMeta.formatted[item.idx];
-      return {
-        raw: labelsMeta.classes[item.idx],
-        crop: fmt.crop,
-        condition: fmt.condition,
-        confidence: item.prob,
-        percentage: Math.round(item.prob * 1000) / 10
-      };
-    });
-
-    const primary = topClasses[0];
-    const info = labelsMeta.formatted[indices[0].idx];
-
-    return {
-      raw_label: primary.raw,
-      crop: info.crop,
-      condition: info.condition,
-      is_healthy: info.is_healthy,
-      confidence: primary.percentage,
-      treatment: info.treatment,
-      top3: topClasses
-    };
-  }
-
-  function showLoadingModelNotice() {
-    hudBadge.className = 'hud-badge idle';
-    hudBadge.innerHTML = '<span class="pulse-dot"></span> Downloading Engine';
-    readoutCrop.textContent = 'Neural Weight Ingestion';
-    readoutDiagnosis.textContent = 'Downloading Model (~55MB)...';
-  }
-
-  // 5. Leaf Diagnosis Workbench Logic
+  // 4. Leaf Diagnosis Workbench Logic (Server-Powered Foliar Inference)
+  // DOM element handles initialized upfront to eliminate any Temporal Dead Zone errors
   const dropzone = document.getElementById('dropzone');
   const fileInput = document.getElementById('imageFileInput');
   const previewContainer = document.getElementById('previewContainer');
@@ -317,155 +171,54 @@ document.addEventListener('DOMContentLoaded', () => {
   const treatmentText = document.getElementById('treatmentText');
   const candidatesContainer = document.getElementById('candidatesContainer');
 
-  ['dragenter', 'dragover'].forEach(eventName => {
-    dropzone.addEventListener(eventName, (e) => {
-      e.preventDefault();
-      dropzone.classList.add('drag-active');
-    }, false);
-  });
+  // Set initial HUD status to ready immediately
+  if (hudBadge) {
+    hudBadge.className = 'hud-badge idle';
+    hudBadge.innerHTML = '<i data-lucide="cpu" style="width: 14px; height: 14px;"></i> Ready';
+    if (window.lucide) lucide.createIcons();
+  }
 
-  ['dragleave', 'drop'].forEach(eventName => {
-    dropzone.addEventListener(eventName, (e) => {
-      e.preventDefault();
-      dropzone.classList.remove('drag-active');
-    }, false);
-  });
-
-  dropzone.addEventListener('drop', (e) => {
-    const dt = e.dataTransfer;
-    const files = dt.files;
-    if (files.length > 0) {
-      handleFile(files[0]);
-    }
-  });
-
-  fileInput.addEventListener('change', (e) => {
-    if (e.target.files.length > 0) {
-      handleFile(e.target.files[0]);
-    }
-  });
-
-  function handleFile(file) {
-    if (!file.type.match('image.*')) {
-      alert('Please upload a valid image file (JPG, PNG).');
-      return;
-    }
-
-    const reader = new FileReader();
-    reader.onload = async (e) => {
-      showPreview(e.target.result);
-      
-      // 1. Try server-side inference first (Fast, no 55MB model download!)
-      const serverHandled = await runAnalysisWithServer(file);
-      if (serverHandled) return;
-
-      // 2. Fallback to in-browser inference only if server is unreachable
-      const tempImg = new Image();
-      tempImg.onload = async () => {
-        try {
-          const result = await predictImageInBrowser(tempImg);
-          displayResults(result);
-        } catch (err) {
-          showError('Diagnosis Notice: ' + err.message);
-        }
-      };
-      tempImg.src = e.target.result;
-    };
-    reader.readAsDataURL(file);
+  function getAssetUrl(relativePath) {
+    const currentPath = window.location.pathname;
+    const baseDir = currentPath.substring(0, currentPath.lastIndexOf('/') + 1);
+    return new URL(relativePath, window.location.origin + baseDir).href;
   }
 
   function showPreview(src) {
-    previewImg.src = src;
-    previewContainer.style.display = 'block';
-    lidarScanline.style.display = 'block';
-    hudBadge.className = 'hud-badge idle';
-    hudBadge.innerHTML = '<span class="pulse-dot"></span> Analyzing';
-    readoutCrop.textContent = 'Spectrometric Scan in Progress...';
-    readoutDiagnosis.textContent = 'Processing Foliage Pixels...';
-  }
-
-  async function runAnalysisWithServer(file) {
-    const formData = new FormData();
-    formData.append('image', file);
-
-    try {
-      const response = await fetch('/api/predict', {
-        method: 'POST',
-        body: formData
-      });
-      if (!response.ok) return false;
-      const res = await response.json();
-      if (res.success && res.data) {
-        displayResults(res.data);
-        return true;
-      }
-      return false;
-    } catch (err) {
-      console.warn('Server inference unavailable, falling back:', err);
-      return false;
+    if (previewImg) previewImg.src = src;
+    if (previewContainer) previewContainer.style.display = 'block';
+    if (lidarScanline) lidarScanline.style.display = 'block';
+    if (hudBadge) {
+      hudBadge.className = 'hud-badge idle';
+      hudBadge.innerHTML = '<span class="pulse-dot"></span> Analyzing';
     }
+    if (readoutCrop) readoutCrop.textContent = 'Spectrometric Scan in Progress...';
+    if (readoutDiagnosis) readoutDiagnosis.textContent = 'Processing Foliage Pixels...';
   }
-
-  // Quick Test Sample Function (Server-First)
-  window.testSample = async function(sampleFileName, chipElement) {
-    document.querySelectorAll('.sample-chip').forEach(c => c.classList.remove('active'));
-    if (chipElement) chipElement.classList.add('active');
-
-    const sampleUrl = getAssetUrl(`static/samples/${sampleFileName}`);
-    showPreview(sampleUrl);
-
-    // 1. Try server-side sample inference first
-    try {
-      const response = await fetch('/api/predict', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ sample: sampleFileName })
-      });
-      if (response.ok) {
-        const res = await response.json();
-        if (res.success && res.data) {
-          displayResults(res.data);
-          return;
-        }
-      }
-    } catch (err) {
-      console.warn('Server sample inference failed, falling back:', err);
-    }
-
-    // 2. Fallback to in-browser inference only if server is unreachable
-    const tempImg = new Image();
-    tempImg.crossOrigin = 'anonymous';
-    tempImg.onload = async () => {
-      try {
-        const result = await predictImageInBrowser(tempImg);
-        displayResults(result);
-      } catch (err) {
-        showError(err.message);
-      }
-    };
-    tempImg.src = sampleUrl;
-  };
 
   function displayResults(data) {
     setTimeout(() => {
-      lidarScanline.style.display = 'none';
+      if (lidarScanline) lidarScanline.style.display = 'none';
 
-      const isHealthy = data.is_healthy;
-      hudBadge.className = isHealthy ? 'hud-badge healthy' : 'hud-badge diseased';
-      hudBadge.innerHTML = isHealthy 
-        ? '<i data-lucide="check-circle-2" style="width:14px;height:14px;"></i> Healthy' 
-        : '<i data-lucide="alert-triangle" style="width:14px;height:14px;"></i> Pathology Detected';
+      const isHealthy = Boolean(data.is_healthy);
+      if (hudBadge) {
+        hudBadge.className = isHealthy ? 'hud-badge healthy' : 'hud-badge diseased';
+        hudBadge.innerHTML = isHealthy 
+          ? '<i data-lucide="check-circle-2" style="width:14px;height:14px;"></i> Healthy' 
+          : '<i data-lucide="alert-triangle" style="width:14px;height:14px;"></i> Pathology Detected';
+      }
 
-      readoutCrop.textContent = `${data.crop} Specimen`;
-      readoutDiagnosis.textContent = data.condition;
+      if (readoutCrop) readoutCrop.textContent = `${data.crop || 'Botanical'} Specimen`;
+      if (readoutDiagnosis) readoutDiagnosis.textContent = data.condition || 'Analysis Complete';
 
-      confidenceScore.textContent = `${data.confidence}% Match`;
-      confidenceBarFill.style.width = `${Math.min(data.confidence, 100)}%`;
+      const confVal = data.confidence !== undefined ? data.confidence : 95.0;
+      if (confidenceScore) confidenceScore.textContent = `${confVal}% Match`;
+      if (confidenceBarFill) confidenceBarFill.style.width = `${Math.min(confVal, 100)}%`;
 
-      treatmentBox.style.display = 'block';
-      treatmentText.textContent = data.treatment;
+      if (treatmentBox) treatmentBox.style.display = 'block';
+      if (treatmentText) treatmentText.textContent = data.treatment || 'Consult agricultural extension specialist.';
 
-      if (data.top3 && data.top3.length > 0) {
+      if (candidatesContainer && data.top3 && data.top3.length > 0) {
         candidatesContainer.innerHTML = data.top3.map(c => `
           <div class="candidate-item">
             <span class="candidate-name">${c.crop} • ${c.condition}</span>
@@ -475,14 +228,141 @@ document.addEventListener('DOMContentLoaded', () => {
       }
 
       if (window.lucide) lucide.createIcons();
-    }, 450);
+    }, 400);
   }
 
   function showError(msg) {
-    lidarScanline.style.display = 'none';
-    hudBadge.className = 'hud-badge diseased';
-    hudBadge.textContent = 'Notice';
-    readoutCrop.textContent = 'Inference Status';
-    readoutDiagnosis.textContent = msg;
+    if (lidarScanline) lidarScanline.style.display = 'none';
+    if (hudBadge) {
+      hudBadge.className = 'hud-badge diseased';
+      hudBadge.innerHTML = '<i data-lucide="alert-circle" style="width:14px;height:14px;"></i> Notice';
+    }
+    if (readoutCrop) readoutCrop.textContent = 'Diagnostic Notice';
+    if (readoutDiagnosis) readoutDiagnosis.textContent = msg || 'Diagnosis service unavailable. Please retry.';
+    if (window.lucide) lucide.createIcons();
+  }
+
+  // File Upload Diagnosis Pipeline
+  async function handleFile(file) {
+    if (!file || !file.type.match('image.*')) {
+      alert('Please upload a valid image file (JPG, PNG).');
+      return;
+    }
+
+    const reader = new FileReader();
+    reader.onload = async (e) => {
+      showPreview(e.target.result);
+
+      // Free tier cold start watchdog: inform user if server takes >3.5s to wake up
+      let isSlow = false;
+      const slowTimer = setTimeout(() => {
+        isSlow = true;
+        if (readoutCrop) readoutCrop.textContent = 'Waking Neural Engine...';
+        if (readoutDiagnosis) readoutDiagnosis.textContent = 'Server instance is spinning up (free tier cold start, ~15s)...';
+      }, 3500);
+
+      const formData = new FormData();
+      formData.append('image', file);
+
+      try {
+        const response = await fetch('/api/predict', {
+          method: 'POST',
+          body: formData
+        });
+        clearTimeout(slowTimer);
+
+        if (!response.ok) {
+          const errData = await response.json().catch(() => ({}));
+          throw new Error(errData.error || `Server responded with status ${response.status}`);
+        }
+
+        const res = await response.json();
+        if (res.success && res.data) {
+          displayResults(res.data);
+        } else {
+          throw new Error(res.error || 'Invalid response received from diagnostic engine.');
+        }
+      } catch (err) {
+        clearTimeout(slowTimer);
+        console.error('[FloraAI] Inference error:', err);
+        showError(err.message || 'Diagnostic service currently offline. Please retry in a few moments.');
+      }
+    };
+    reader.readAsDataURL(file);
+  }
+
+  // Quick Test Sample Function
+  window.testSample = async function(sampleFileName, chipElement) {
+    document.querySelectorAll('.sample-chip').forEach(c => c.classList.remove('active'));
+    if (chipElement) chipElement.classList.add('active');
+
+    const sampleUrl = getAssetUrl(`static/samples/${sampleFileName}`);
+    showPreview(sampleUrl);
+
+    let isSlow = false;
+    const slowTimer = setTimeout(() => {
+      isSlow = true;
+      if (readoutCrop) readoutCrop.textContent = 'Waking Neural Engine...';
+      if (readoutDiagnosis) readoutDiagnosis.textContent = 'Server instance is spinning up (free tier cold start)...';
+    }, 3500);
+
+    try {
+      const response = await fetch('/api/predict', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ sample: sampleFileName })
+      });
+      clearTimeout(slowTimer);
+
+      if (!response.ok) {
+        const errData = await response.json().catch(() => ({}));
+        throw new Error(errData.error || `Server responded with status ${response.status}`);
+      }
+
+      const res = await response.json();
+      if (res.success && res.data) {
+        displayResults(res.data);
+      } else {
+        throw new Error(res.error || 'Sample diagnostic analysis failed.');
+      }
+    } catch (err) {
+      clearTimeout(slowTimer);
+      console.error('[FloraAI] Sample inference error:', err);
+      showError(err.message || 'Diagnostic service currently offline. Please retry.');
+    }
+  };
+
+  // Drag and drop event listeners
+  if (dropzone) {
+    ['dragenter', 'dragover'].forEach(eventName => {
+      dropzone.addEventListener(eventName, (e) => {
+        e.preventDefault();
+        dropzone.classList.add('drag-active');
+      }, false);
+    });
+
+    ['dragleave', 'drop'].forEach(eventName => {
+      dropzone.addEventListener(eventName, (e) => {
+        e.preventDefault();
+        dropzone.classList.remove('drag-active');
+      }, false);
+    });
+
+    dropzone.addEventListener('drop', (e) => {
+      const dt = e.dataTransfer;
+      const files = dt && dt.files;
+      if (files && files.length > 0) {
+        handleFile(files[0]);
+      }
+    });
+  }
+
+  // File input change listener
+  if (fileInput) {
+    fileInput.addEventListener('change', (e) => {
+      if (e.target.files && e.target.files.length > 0) {
+        handleFile(e.target.files[0]);
+      }
+    });
   }
 });
