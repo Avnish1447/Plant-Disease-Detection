@@ -65,3 +65,7 @@ Thumbs.db
 
 # Markdown Files
 HOSTING_RESEARCH_REPORT.md
+
+# Uploads
+static/uploads/*
+!static/uploads/.gitkeep

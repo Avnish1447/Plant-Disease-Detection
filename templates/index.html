@@ -12,7 +12,7 @@
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
   
   <!-- Stylesheet (Cache-busted) -->
-  <link rel="stylesheet" href="/static/css/style.css?v=3.0.0">
+  <link rel="stylesheet" href="/static/css/style.css?v=3.1.0">
 
   <!-- Lenis Smooth Scroll -->
   <script src="https://unpkg.com/lenis@1.1.18/dist/lenis.min.js"></script>
@@ -155,10 +155,29 @@
             <h3 class="upload-title">Drop your leaf image here</h3>
             <p class="upload-hint">or click to browse from device (JPG, PNG)</p>
 
-            <!-- Real-time Preview Stage with LiDAR Scanline -->
+            <!-- Real-time Preview Stage with LiDAR Scanline & Apple Floating Controls -->
             <div class="preview-container" id="previewContainer">
               <img id="previewImg" class="preview-img" alt="Leaf Sample Preview">
               <div class="lidar-scanline" id="lidarScanline"></div>
+
+              <!-- Top Bar Actions (Live Status + Dismiss) -->
+              <div class="preview-top-bar">
+                <span class="preview-badge">
+                  <span class="pulse-dot"></span>
+                  <span id="previewStatusLabel">Active Specimen</span>
+                </span>
+                <button type="button" class="btn-glass-icon" id="btnClearPreview" title="Clear image and return to dropzone" aria-label="Clear image">
+                  <i data-lucide="x" style="width: 14px; height: 14px;"></i>
+                </button>
+              </div>
+
+              <!-- Bottom Floating Action Bar (Apple Liquid Glass Pill) -->
+              <div class="preview-bottom-actions">
+                <button type="button" class="btn-apple-glass-pill" id="btnTestAnother" aria-label="Test another leaf image">
+                  <i data-lucide="image-plus" style="width: 16px; height: 16px;"></i>
+                  <span>Test Another Image</span>
+                </button>
+              </div>
             </div>
           </div>
 
@@ -242,6 +261,14 @@
                 <span class="candidate-val">—</span>
               </div>
             </div>
+          </div>
+
+          <!-- Post-Diagnosis Action Control -->
+          <div class="readout-actions" id="readoutActions" style="display: none;">
+            <button type="button" class="btn-apple-secondary" id="btnTestAnotherHud" aria-label="Diagnose another leaf">
+              <i data-lucide="scan-line" style="width: 15px; height: 15px;"></i>
+              <span>Diagnose Another Leaf</span>
+            </button>
           </div>
         </div>
       </div>
@@ -364,6 +391,6 @@
   </footer>
 
   <!-- Application Script (Cache-busted) -->
-  <script type="module" src="/static/js/app.js?v=3.0.0"></script>
+  <script type="module" src="/static/js/app.js?v=3.1.0"></script>
 </body>
 </html>

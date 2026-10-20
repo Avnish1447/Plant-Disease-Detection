@@ -171,6 +171,13 @@ document.addEventListener('DOMContentLoaded', () => {
   const treatmentText = document.getElementById('treatmentText');
   const candidatesContainer = document.getElementById('candidatesContainer');
 
+  // Apple-grade Interactive Action Controls
+  const btnTestAnother = document.getElementById('btnTestAnother');
+  const btnClearPreview = document.getElementById('btnClearPreview');
+  const btnTestAnotherHud = document.getElementById('btnTestAnotherHud');
+  const readoutActions = document.getElementById('readoutActions');
+  const previewStatusLabel = document.getElementById('previewStatusLabel');
+
   // Set initial HUD status to ready immediately
   if (hudBadge) {
     hudBadge.className = 'hud-badge idle';
@@ -184,10 +191,31 @@ document.addEventListener('DOMContentLoaded', () => {
     return new URL(relativePath, window.location.origin + baseDir).href;
   }
 
+  function resetWorkbench() {
+    if (previewContainer) previewContainer.style.display = 'none';
+    if (previewImg) previewImg.src = '';
+    if (fileInput) fileInput.value = '';
+    if (lidarScanline) lidarScanline.style.display = 'none';
+    if (readoutActions) readoutActions.style.display = 'none';
+    if (treatmentBox) treatmentBox.style.display = 'none';
+    if (readoutCrop) readoutCrop.textContent = 'Botanical Analyzer';
+    if (readoutDiagnosis) readoutDiagnosis.textContent = 'Awaiting Specimen';
+    if (confidenceScore) confidenceScore.textContent = '—';
+    if (confidenceBarFill) confidenceBarFill.style.width = '0%';
+    if (hudBadge) {
+      hudBadge.className = 'hud-badge idle';
+      hudBadge.innerHTML = '<i data-lucide="cpu" style="width: 14px; height: 14px;"></i> Ready';
+    }
+    document.querySelectorAll('.sample-chip').forEach(c => c.classList.remove('active'));
+    if (window.lucide) lucide.createIcons();
+  }
+
   function showPreview(src) {
     if (previewImg) previewImg.src = src;
     if (previewContainer) previewContainer.style.display = 'block';
     if (lidarScanline) lidarScanline.style.display = 'block';
+    if (previewStatusLabel) previewStatusLabel.textContent = 'Diagnosing Specimen';
+    if (readoutActions) readoutActions.style.display = 'none';
     if (hudBadge) {
       hudBadge.className = 'hud-badge idle';
       hudBadge.innerHTML = '<span class="pulse-dot"></span> Analyzing';
@@ -199,6 +227,8 @@ document.addEventListener('DOMContentLoaded', () => {
   function displayResults(data) {
     setTimeout(() => {
       if (lidarScanline) lidarScanline.style.display = 'none';
+      if (previewStatusLabel) previewStatusLabel.textContent = 'Diagnosis Complete';
+      if (readoutActions) readoutActions.style.display = 'block';
 
       const isHealthy = Boolean(data.is_healthy);
       if (hudBadge) {
@@ -363,6 +393,30 @@ document.addEventListener('DOMContentLoaded', () => {
       if (e.target.files && e.target.files.length > 0) {
         handleFile(e.target.files[0]);
       }
+    });
+  }
+
+  // Apple Action Controls: Test Another Leaf & Reset Workbench
+  if (btnTestAnother) {
+    btnTestAnother.addEventListener('click', (e) => {
+      e.preventDefault();
+      e.stopPropagation();
+      if (fileInput) fileInput.click();
+    });
+  }
+
+  if (btnTestAnotherHud) {
+    btnTestAnotherHud.addEventListener('click', (e) => {
+      e.preventDefault();
+      if (fileInput) fileInput.click();
+    });
+  }
+
+  if (btnClearPreview) {
+    btnClearPreview.addEventListener('click', (e) => {
+      e.preventDefault();
+      e.stopPropagation();
+      resetWorkbench();
     });
   }
 });
