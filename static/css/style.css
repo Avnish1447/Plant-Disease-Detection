@@ -1170,3 +1170,132 @@ footer a {
 footer a:hover {
   color: var(--text-primary);
 }
+
+/* ==================================================== */
+/* BIOLUMINESCENT CYBER-BOTANICAL VINES & BLOOMS        */
+/* ==================================================== */
+.biolum-vine-track {
+  position: fixed;
+  top: 0;
+  bottom: 0;
+  width: 85px;
+  height: 100vh;
+  pointer-events: none;
+  z-index: 30;
+  overflow: visible;
+  transition: opacity 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+  opacity: 0.85;
+}
+
+.vine-left {
+  left: 0;
+}
+
+.vine-right {
+  right: 0;
+}
+
+.biolum-vine-svg {
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+  filter: drop-shadow(0 0 6px rgba(16, 185, 129, 0.2));
+}
+
+.vine-stem {
+  fill: none;
+  stroke-width: 1.5;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  vector-effect: non-scaling-stroke;
+}
+
+.vine-tendril {
+  fill: none;
+  stroke: rgba(16, 185, 129, 0.4);
+  stroke-width: 1.2;
+  stroke-linecap: round;
+}
+
+.bio-leaf {
+  stroke-width: 0.8;
+  transform-box: fill-box;
+  transform-origin: center;
+  opacity: 0.65;
+}
+
+.bio-leaf-vein {
+  stroke: rgba(52, 211, 153, 0.4);
+  stroke-width: 0.8;
+  fill: none;
+}
+
+.bio-petal {
+  stroke-width: 1;
+  stroke: rgba(254, 240, 138, 0.65);
+  transform-box: fill-box;
+  transform-origin: center;
+  mix-blend-mode: screen;
+}
+
+.stamen-tip {
+  fill: #fde047;
+  filter: drop-shadow(0 0 6px rgba(245, 158, 11, 0.8));
+}
+
+.flower-core {
+  transform-box: fill-box;
+  transform-origin: center;
+  animation: biolum-flower-pulse 4s infinite ease-in-out;
+}
+
+.flower-aura {
+  mix-blend-mode: screen;
+  transform-box: fill-box;
+  transform-origin: center;
+  animation: biolum-flower-aura 4.5s infinite ease-in-out;
+}
+
+@keyframes biolum-flower-pulse {
+  0%, 100% {
+    filter: drop-shadow(0 0 4px rgba(253, 224, 71, 0.6));
+    transform: scale(0.96);
+  }
+  50% {
+    filter: drop-shadow(0 0 12px rgba(245, 158, 11, 0.85)) drop-shadow(0 0 18px rgba(254, 240, 138, 0.5));
+    transform: scale(1.05);
+  }
+}
+
+@keyframes biolum-flower-aura {
+  0%, 100% {
+    opacity: 0.25;
+    transform: scale(0.95);
+  }
+  50% {
+    opacity: 0.6;
+    transform: scale(1.15);
+  }
+}
+
+@media (max-width: 1200px) {
+  .biolum-vine-track {
+    width: 65px;
+    opacity: 0.75;
+  }
+}
+
+@media (max-width: 860px) {
+  .biolum-vine-track {
+    width: 45px;
+    opacity: 0.55;
+  }
+}
+
+@media (max-width: 580px) {
+  .biolum-vine-track {
+    width: 26px;
+    opacity: 0.35;
+  }
+}
+
