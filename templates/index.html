@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>FloraVision Pro — Intelligent Foliar Pathology & Botanical Diagnostics</title>
+  <title>Flora Vision — Intelligent Foliar Pathology & Botanical Diagnostics</title>
   <meta name="description" content="State-of-the-art foliar disease detection powered by deep convolutional neural networks. Real-time diagnosis for 38 crop pathologies.">
   
   <!-- Apple Font & Inter Fallback -->
@@ -12,7 +12,7 @@
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
   
   <!-- Stylesheet (Cache-busted) -->
-  <link rel="stylesheet" href="/static/css/style.css?v=3.2.0">
+  <link rel="stylesheet" href="/static/css/style.css?v=3.4.0">
 
   <!-- Lenis Smooth Scroll -->
   <script src="https://unpkg.com/lenis@1.1.18/dist/lenis.min.js"></script>
@@ -26,12 +26,215 @@
 </head>
 <body>
 
+  <!-- ==================================================== -->
+  <!-- ==================================================== -->
+  <!-- BIOLUMINESCENT CYBER-BOTANICAL VINES (MINIMAL BLOOMS)-->
+  <!-- ==================================================== -->
+  <aside class="biolum-vine-track vine-left" aria-hidden="true">
+    <svg class="biolum-vine-svg" viewBox="0 0 140 1000" preserveAspectRatio="xMinYMid slice">
+      <defs>
+        <!-- Subtle Muted Forest Green Stem Gradient -->
+        <linearGradient id="stem-grad-l" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stop-color="#15803d" stop-opacity="0.55"/>
+          <stop offset="50%" stop-color="#047857" stop-opacity="0.45"/>
+          <stop offset="100%" stop-color="#10b981" stop-opacity="0.6"/>
+        </linearGradient>
+        <!-- Muted Deep Jade Leaf Gradient -->
+        <linearGradient id="leaf-grad-l" x1="0" y1="0" x2="1" y2="1">
+          <stop offset="0%" stop-color="#062e22" stop-opacity="0.5"/>
+          <stop offset="100%" stop-color="#065f46" stop-opacity="0.4"/>
+        </linearGradient>
+        <!-- Ethereal Pearlescent White & Soft Gold Petal Gradient -->
+        <linearGradient id="petal-grad-flower" x1="0" y1="0" x2="1" y2="1">
+          <stop offset="0%" stop-color="#ffffff" stop-opacity="0.98"/>
+          <stop offset="50%" stop-color="#fefce8" stop-opacity="0.92"/>
+          <stop offset="85%" stop-color="#fef08a" stop-opacity="0.85"/>
+          <stop offset="100%" stop-color="#fde047" stop-opacity="0.95"/>
+        </linearGradient>
+        <!-- Luminous Warm Golden Stamen Core -->
+        <radialGradient id="core-glow-flower" cx="50%" cy="50%" r="50%">
+          <stop offset="0%" stop-color="#ffffff" stop-opacity="1"/>
+          <stop offset="35%" stop-color="#fef08a" stop-opacity="0.95"/>
+          <stop offset="70%" stop-color="#f59e0b" stop-opacity="0.6"/>
+          <stop offset="100%" stop-color="transparent" stop-opacity="0"/>
+        </radialGradient>
+        <!-- Soft Warm Aura Halo -->
+        <radialGradient id="flower-aura-grad" cx="50%" cy="50%" r="50%">
+          <stop offset="0%" stop-color="#fef08a" stop-opacity="0.45"/>
+          <stop offset="50%" stop-color="#f59e0b" stop-opacity="0.2"/>
+          <stop offset="100%" stop-color="transparent" stop-opacity="0"/>
+        </radialGradient>
+      </defs>
+
+      <!-- Slender Climbing Vine Stem -->
+      <path class="vine-stem vine-stem-left" pathLength="1000" stroke-dasharray="1000" stroke-dashoffset="1000" stroke="url(#stem-grad-l)" d="M 12 -20 C 32 80, 10 160, 28 240 C 44 320, 14 420, 26 520 C 38 620, 12 720, 28 820 C 38 900, 18 970, 24 1020"/>
+
+      <!-- Minimal Delicate Tendrils -->
+      <path class="vine-tendril" pathLength="200" stroke-dasharray="200" stroke-dashoffset="200" d="M 16 150 C 32 138, 42 148, 38 162 C 34 172, 22 170, 25 160 C 27 155, 33 156, 31 161"/>
+      <path class="vine-tendril" pathLength="200" stroke-dasharray="200" stroke-dashoffset="200" d="M 18 640 C 36 628, 48 638, 42 654 C 37 667, 23 663, 28 650 C 30 644, 38 645, 36 652"/>
+
+      <!-- Sparse Foliar Leaves -->
+      <g class="bio-leaf-group" data-depth="0.10" style="transform-origin: 18px 90px;">
+        <path class="bio-leaf" d="M 18 90 C 30 78, 42 82, 48 96 C 36 102, 26 98, 18 90 Z" fill="url(#leaf-grad-l)" stroke="rgba(34, 197, 94, 0.4)"/>
+        <path class="bio-leaf-vein" d="M 18 90 Q 32 89, 48 96"/>
+      </g>
+      <g class="bio-leaf-group" data-depth="0.46" style="transform-origin: 24px 470px;">
+        <path class="bio-leaf" d="M 24 470 C 38 456, 52 462, 58 476 C 45 482, 33 478, 24 470 Z" fill="url(#leaf-grad-l)" stroke="rgba(34, 197, 94, 0.4)"/>
+        <path class="bio-leaf-vein" d="M 24 470 Q 40 468, 58 476"/>
+      </g>
+      <g class="bio-leaf-group" data-depth="0.90" style="transform-origin: 22px 910px;">
+        <path class="bio-leaf" d="M 22 910 C 36 896, 50 902, 56 916 C 43 922, 31 918, 22 910 Z" fill="url(#leaf-grad-l)" stroke="rgba(34, 197, 94, 0.4)"/>
+        <path class="bio-leaf-vein" d="M 22 910 Q 38 908, 56 916"/>
+      </g>
+
+      <!-- Minimal Blossom L1: Pearlescent White Moonflower (~24% scroll) -->
+      <g class="bio-flower bio-flower-l1" data-depth="0.24" style="transform-origin: 28px 240px;">
+        <circle class="flower-aura" cx="28" cy="240" r="22" fill="url(#flower-aura-grad)"/>
+        <g class="flower-petals-wrap" style="transform-origin: 28px 240px;">
+          <path class="bio-petal" d="M 28 240 C 22 224, 24 212, 28 207 C 32 212, 34 224, 28 240 Z" fill="url(#petal-grad-flower)"/>
+          <path class="bio-petal" d="M 28 240 C 40 230, 50 234, 55 239 C 49 245, 38 247, 28 240 Z" fill="url(#petal-grad-flower)"/>
+          <path class="bio-petal" d="M 28 240 C 38 252, 41 264, 38 270 C 32 265, 28 256, 28 240 Z" fill="url(#petal-grad-flower)"/>
+          <path class="bio-petal" d="M 28 240 C 19 257, 14 266, 8 269 C 6 263, 11 251, 28 240 Z" fill="url(#petal-grad-flower)"/>
+          <path class="bio-petal" d="M 28 240 C 11 244, 0 242, -5 236 C -1 232, 10 229, 28 240 Z" fill="url(#petal-grad-flower)"/>
+        </g>
+        <g class="flower-stamens" style="transform-origin: 28px 240px;">
+          <line x1="28" y1="240" x2="28" y2="228" stroke="#fde047" stroke-width="1" stroke-linecap="round"/>
+          <circle cx="28" cy="228" r="1.8" class="stamen-tip"/>
+          <line x1="28" y1="240" x2="38" y2="235" stroke="#fde047" stroke-width="1" stroke-linecap="round"/>
+          <circle cx="38" cy="235" r="1.8" class="stamen-tip"/>
+          <line x1="28" y1="240" x2="34" y2="249" stroke="#fde047" stroke-width="1" stroke-linecap="round"/>
+          <circle cx="34" cy="249" r="1.8" class="stamen-tip"/>
+          <line x1="28" y1="240" x2="22" y2="249" stroke="#fde047" stroke-width="1" stroke-linecap="round"/>
+          <circle cx="22" cy="249" r="1.8" class="stamen-tip"/>
+          <line x1="28" y1="240" x2="18" y2="235" stroke="#fde047" stroke-width="1" stroke-linecap="round"/>
+          <circle cx="18" cy="235" r="1.8" class="stamen-tip"/>
+        </g>
+        <circle cx="28" cy="240" r="4" class="flower-core" fill="url(#core-glow-flower)"/>
+      </g>
+
+      <!-- Minimal Blossom L2: Pearlescent White Blossom (~74% scroll) -->
+      <g class="bio-flower bio-flower-l2" data-depth="0.74" style="transform-origin: 28px 760px;">
+        <circle class="flower-aura" cx="28" cy="760" r="22" fill="url(#flower-aura-grad)"/>
+        <g class="flower-petals-wrap" style="transform-origin: 28px 760px;">
+          <path class="bio-petal" d="M 28 760 C 22 744, 24 732, 28 727 C 32 732, 34 744, 28 760 Z" fill="url(#petal-grad-flower)"/>
+          <path class="bio-petal" d="M 28 760 C 40 750, 50 754, 55 759 C 49 765, 38 767, 28 760 Z" fill="url(#petal-grad-flower)"/>
+          <path class="bio-petal" d="M 28 760 C 38 772, 41 784, 38 790 C 32 785, 28 776, 28 760 Z" fill="url(#petal-grad-flower)"/>
+          <path class="bio-petal" d="M 28 760 C 19 777, 14 786, 8 789 C 6 783, 11 771, 28 760 Z" fill="url(#petal-grad-flower)"/>
+          <path class="bio-petal" d="M 28 760 C 11 764, 0 762, -5 756 C -1 752, 10 749, 28 760 Z" fill="url(#petal-grad-flower)"/>
+        </g>
+        <g class="flower-stamens" style="transform-origin: 28px 760px;">
+          <line x1="28" y1="760" x2="28" y2="748" stroke="#fde047" stroke-width="1" stroke-linecap="round"/>
+          <circle cx="28" cy="748" r="1.8" class="stamen-tip"/>
+          <line x1="28" y1="760" x2="38" y2="755" stroke="#fde047" stroke-width="1" stroke-linecap="round"/>
+          <circle cx="38" cy="755" r="1.8" class="stamen-tip"/>
+          <line x1="28" y1="760" x2="34" y2="769" stroke="#fde047" stroke-width="1" stroke-linecap="round"/>
+          <circle cx="34" cy="769" r="1.8" class="stamen-tip"/>
+          <line x1="28" y1="760" x2="22" y2="769" stroke="#fde047" stroke-width="1" stroke-linecap="round"/>
+          <circle cx="22" cy="769" r="1.8" class="stamen-tip"/>
+          <line x1="28" y1="760" x2="18" y2="755" stroke="#fde047" stroke-width="1" stroke-linecap="round"/>
+          <circle cx="18" cy="755" r="1.8" class="stamen-tip"/>
+        </g>
+        <circle cx="28" cy="760" r="4" class="flower-core" fill="url(#core-glow-flower)"/>
+      </g>
+    </svg>
+  </aside>
+
+  <!-- Right Edge Vine Track (Minimal Floral) -->
+  <aside class="biolum-vine-track vine-right" aria-hidden="true">
+    <svg class="biolum-vine-svg" viewBox="0 0 140 1000" preserveAspectRatio="xMaxYMid slice">
+      <defs>
+        <!-- Subtle Muted Forest Green Stem Gradient -->
+        <linearGradient id="stem-grad-r" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stop-color="#15803d" stop-opacity="0.55"/>
+          <stop offset="50%" stop-color="#047857" stop-opacity="0.45"/>
+          <stop offset="100%" stop-color="#10b981" stop-opacity="0.6"/>
+        </linearGradient>
+        <!-- Muted Deep Jade Leaf Gradient -->
+        <linearGradient id="leaf-grad-r" x1="1" y1="0" x2="0" y2="1">
+          <stop offset="0%" stop-color="#062e22" stop-opacity="0.5"/>
+          <stop offset="100%" stop-color="#065f46" stop-opacity="0.4"/>
+        </linearGradient>
+      </defs>
+
+      <!-- Slender Climbing Vine Stem -->
+      <path class="vine-stem vine-stem-right" pathLength="1000" stroke-dasharray="1000" stroke-dashoffset="1000" stroke="url(#stem-grad-r)" d="M 128 -20 C 108 90, 130 180, 112 280 C 94 380, 126 480, 114 580 C 98 680, 128 780, 112 880 C 102 940, 122 980, 116 1020"/>
+
+      <!-- Minimal Delicate Tendrils -->
+      <path class="vine-tendril" pathLength="200" stroke-dasharray="200" stroke-dashoffset="200" d="M 124 200 C 108 188, 96 198, 102 212 C 106 222, 118 220, 115 210 C 113 205, 107 206, 109 211"/>
+      <path class="vine-tendril" pathLength="200" stroke-dasharray="200" stroke-dashoffset="200" d="M 122 710 C 104 698, 92 708, 98 724 C 103 737, 117 733, 112 720 C 110 714, 102 715, 104 722"/>
+
+      <!-- Sparse Foliar Leaves -->
+      <g class="bio-leaf-group" data-depth="0.14" style="transform-origin: 122px 130px;">
+        <path class="bio-leaf" d="M 122 130 C 110 118, 98 122, 92 136 C 104 142, 114 138, 122 130 Z" fill="url(#leaf-grad-r)" stroke="rgba(34, 197, 94, 0.4)"/>
+        <path class="bio-leaf-vein" d="M 122 130 Q 108 129, 92 136"/>
+      </g>
+      <g class="bio-leaf-group" data-depth="0.54" style="transform-origin: 116px 540px;">
+        <path class="bio-leaf" d="M 116 540 C 102 526, 88 532, 82 546 C 95 552, 107 548, 116 540 Z" fill="url(#leaf-grad-r)" stroke="rgba(34, 197, 94, 0.4)"/>
+        <path class="bio-leaf-vein" d="M 116 540 Q 100 538, 82 546"/>
+      </g>
+      <g class="bio-leaf-group" data-depth="0.92" style="transform-origin: 118px 940px;">
+        <path class="bio-leaf" d="M 118 940 C 104 926, 90 932, 84 946 C 97 952, 109 948, 118 940 Z" fill="url(#leaf-grad-r)" stroke="rgba(34, 197, 94, 0.4)"/>
+        <path class="bio-leaf-vein" d="M 118 940 Q 102 938, 84 946"/>
+      </g>
+
+      <!-- Minimal Blossom R1: Pearlescent White Moonflower (~38% scroll) -->
+      <g class="bio-flower bio-flower-r1" data-depth="0.38" style="transform-origin: 112px 380px;">
+        <circle class="flower-aura" cx="112" cy="380" r="22" fill="url(#flower-aura-grad)"/>
+        <g class="flower-petals-wrap" style="transform-origin: 112px 380px;">
+          <path class="bio-petal" d="M 112 380 C 118 364, 116 352, 112 347 C 108 352, 106 364, 112 380 Z" fill="url(#petal-grad-flower)"/>
+          <path class="bio-petal" d="M 112 380 C 100 370, 90 374, 85 379 C 91 385, 102 387, 112 380 Z" fill="url(#petal-grad-flower)"/>
+          <path class="bio-petal" d="M 112 380 C 102 392, 99 404, 102 410 C 108 405, 112 396, 112 380 Z" fill="url(#petal-grad-flower)"/>
+          <path class="bio-petal" d="M 112 380 C 121 397, 126 406, 132 409 C 134 403, 129 391, 112 380 Z" fill="url(#petal-grad-flower)"/>
+          <path class="bio-petal" d="M 112 380 C 129 384, 140 382, 145 376 C 141 372, 130 369, 112 380 Z" fill="url(#petal-grad-flower)"/>
+        </g>
+        <g class="flower-stamens" style="transform-origin: 112px 380px;">
+          <line x1="112" y1="380" x2="112" y2="368" stroke="#fde047" stroke-width="1" stroke-linecap="round"/>
+          <circle cx="112" cy="368" r="1.8" class="stamen-tip"/>
+          <line x1="112" y1="380" x2="102" y2="375" stroke="#fde047" stroke-width="1" stroke-linecap="round"/>
+          <circle cx="102" cy="375" r="1.8" class="stamen-tip"/>
+          <line x1="112" y1="380" x2="106" y2="389" stroke="#fde047" stroke-width="1" stroke-linecap="round"/>
+          <circle cx="106" cy="389" r="1.8" class="stamen-tip"/>
+          <line x1="112" y1="380" x2="118" y2="389" stroke="#fde047" stroke-width="1" stroke-linecap="round"/>
+          <circle cx="118" cy="389" r="1.8" class="stamen-tip"/>
+          <line x1="112" y1="380" x2="122" y2="375" stroke="#fde047" stroke-width="1" stroke-linecap="round"/>
+          <circle cx="122" cy="375" r="1.8" class="stamen-tip"/>
+        </g>
+        <circle cx="112" cy="380" r="4" class="flower-core" fill="url(#core-glow-flower)"/>
+      </g>
+
+      <!-- Minimal Blossom R2: Pearlescent White Blossom (~84% scroll) -->
+      <g class="bio-flower bio-flower-r2" data-depth="0.84" style="transform-origin: 112px 840px;">
+        <circle class="flower-aura" cx="112" cy="840" r="22" fill="url(#flower-aura-grad)"/>
+        <g class="flower-petals-wrap" style="transform-origin: 112px 840px;">
+          <path class="bio-petal" d="M 112 840 C 118 824, 116 812, 112 807 C 108 812, 106 824, 112 840 Z" fill="url(#petal-grad-flower)"/>
+          <path class="bio-petal" d="M 112 840 C 100 830, 90 834, 85 839 C 91 845, 102 847, 112 840 Z" fill="url(#petal-grad-flower)"/>
+          <path class="bio-petal" d="M 112 840 C 102 852, 99 864, 102 870 C 108 865, 112 856, 112 840 Z" fill="url(#petal-grad-flower)"/>
+          <path class="bio-petal" d="M 112 840 C 121 857, 126 866, 132 869 C 134 863, 129 851, 112 840 Z" fill="url(#petal-grad-flower)"/>
+          <path class="bio-petal" d="M 112 840 C 129 844, 140 842, 145 836 C 141 832, 130 829, 112 840 Z" fill="url(#petal-grad-flower)"/>
+        </g>
+        <g class="flower-stamens" style="transform-origin: 112px 840px;">
+          <line x1="112" y1="840" x2="112" y2="828" stroke="#fde047" stroke-width="1" stroke-linecap="round"/>
+          <circle cx="112" cy="828" r="1.8" class="stamen-tip"/>
+          <line x1="112" y1="840" x2="102" y2="835" stroke="#fde047" stroke-width="1" stroke-linecap="round"/>
+          <circle cx="102" cy="835" r="1.8" class="stamen-tip"/>
+          <line x1="112" y1="840" x2="106" y2="849" stroke="#fde047" stroke-width="1" stroke-linecap="round"/>
+          <circle cx="106" cy="849" r="1.8" class="stamen-tip"/>
+          <line x1="112" y1="840" x2="118" y2="849" stroke="#fde047" stroke-width="1" stroke-linecap="round"/>
+          <circle cx="118" cy="849" r="1.8" class="stamen-tip"/>
+          <line x1="112" y1="840" x2="122" y2="835" stroke="#fde047" stroke-width="1" stroke-linecap="round"/>
+          <circle cx="122" cy="835" r="1.8" class="stamen-tip"/>
+        </g>
+        <circle cx="112" cy="840" r="4" class="flower-core" fill="url(#core-glow-flower)"/>
+      </g>
+    </svg>
+  </aside>
+
   <!-- Floating Liquid Glass Navigation Bar -->
   <header class="nav-wrapper">
     <nav class="nav-bar">
       <a href="#" class="brand-badge">
         <span class="pulse-dot"></span>
-        <span>FloraVision Pro</span>
+        <span>Flora Vision</span>
       </a>
       <div class="nav-links">
         <a href="#keynote" class="nav-link">Overview</a>
@@ -377,12 +580,12 @@
   <!-- Apple-grade Footer -->
   <footer>
     <div class="container-narrow">
-      <p style="margin-bottom: 8px;">FloraVision Pro Botanical Intelligence • Powered by Deep Learning & Computer Vision</p>
+      <p style="margin-bottom: 8px;">Flora Vision Botanical Intelligence • Powered by Deep Learning & Computer Vision</p>
       <p style="color: var(--text-tertiary); font-size: 0.78rem;">Designed with Apple Human Interface Guidelines & Anti-Slop Web Craft.</p>
     </div>
   </footer>
 
   <!-- Application Script (Cache-busted) -->
-  <script type="module" src="/static/js/app.js?v=3.2.0"></script>
+  <script type="module" src="/static/js/app.js?v=3.4.0"></script>
 </body>
 </html>
